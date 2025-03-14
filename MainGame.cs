@@ -12,7 +12,7 @@ public class MainGame : Game
     private SpriteBatch _spriteBatch;
     private Screen _mainScreen;
     private SpriteFont _font;
-    private GraphicsMetaData _graphcisMetaData;
+    private GraphicsContext _graphcisMetaData;
 
     public MainGame()
     {
@@ -33,7 +33,7 @@ public class MainGame : Game
     {
         _spriteBatch = new SpriteBatch(GraphicsDevice);
         _font = Content.Load<SpriteFont>("MainFont");
-        _graphcisMetaData = new GraphicsMetaData
+        _graphcisMetaData = new GraphicsContext
         {
             Font = _font,
             GraphicsDeviceManager = _graphics,

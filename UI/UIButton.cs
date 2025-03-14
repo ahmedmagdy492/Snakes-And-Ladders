@@ -26,7 +26,7 @@ namespace SnakeAndLadders.UI
             return surroundingRect.Contains(new Point((int)mousePosition.X, (int)mousePosition.Y));
         }
 
-        public UIButton(GraphicsMetaData graphicsMetaData, string text) : base(graphicsMetaData)
+        public UIButton(GraphicsContext graphicsMetaData, string text) : base(graphicsMetaData)
         {
             Text = text;
             Background = Color.White;

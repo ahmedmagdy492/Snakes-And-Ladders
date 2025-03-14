@@ -15,17 +15,21 @@ namespace SnakeAndLadders.UI
     {
         private readonly UIEventManager _uIEventManager;
         private readonly Stack<UIContainer> _uiContainers;
-        private readonly GraphicsMetaData _graphicsMetaData;
+        private readonly GraphicsContext _graphicsMetaData;
 
         private void Init()
         {
             UILabel label = new UILabel(_graphicsMetaData, "Snakes And Ladders");
             UIButton vsComputerBtn = new UIButton(_graphicsMetaData, "VS Computer");
-            vsComputerBtn.OnClick += OnPlayButtonClick;
+            vsComputerBtn.OnClick += PlayVersusComp_OnClick;
+            
             UIButton playWithFriendBtn = new UIButton(_graphicsMetaData, "Play With Friend");
+            playWithFriendBtn.OnClick += PlayWithFriendBtn_OnClick;
+
             UIButton createServerBtn = new UIButton(_graphicsMetaData, "Create a Server");
 
             UICenterFlowContainer mainContainer = new UICenterFlowContainer(_graphicsMetaData);
+            mainContainer.Border = new Border { width = 0, color = Color.White };
             mainContainer.Margin = new Padding(top: 20, right: 0, left: 0, bottom: 0);
             mainContainer.Children.Add(label);
             mainContainer.Children.Add(vsComputerBtn);
@@ -35,12 +39,38 @@ namespace SnakeAndLadders.UI
             _uiContainers.Push(mainContainer);
         }
 
-        private void OnPlayButtonClick(UIElement arg1, UIEvent arg2)
+        private void PlayWithFriendBtn_OnClick(UIElement arg1, UIEvent arg2)
         {
-            Debug.WriteLine("Clickeedd yeee");
+            UICenterFlowContainer connectDialogBox = new UICenterFlowContainer(_graphicsMetaData);
+
+            connectDialogBox.Background = Color.Wheat;
+            connectDialogBox.Margin = new Padding(20);
+            UILabel uILabel = new UILabel(_graphicsMetaData, "Enter Friend IP");
+            UITextInput ipAddress = new UITextInput(_graphicsMetaData);
+            
+            UIButton connectButton = new UIButton(_graphicsMetaData, "Connect");
+            UIButton closeButton = new UIButton(_graphicsMetaData, "Close");
+            closeButton.OnClick += CloseButton_OnClick;
+
+            connectDialogBox.Children.Add(uILabel);
+            connectDialogBox.Children.Add(ipAddress);
+            connectDialogBox.Children.Add(connectButton);
+            connectDialogBox.Children.Add(closeButton);
+            connectDialogBox.Position = new Vector2((_graphicsMetaData.ScreenWidth - connectDialogBox.GetWidth()) / 2, 200);
+            _uiContainers.Push(connectDialogBox);
         }
 
-        public Screen(GraphicsMetaData graphicsMetaData)
+        private void CloseButton_OnClick(UIElement arg1, UIEvent arg2)
+        {
+            _uiContainers.Pop();
+        }
+
+        private void PlayVersusComp_OnClick(UIElement arg1, UIEvent arg2)
+        {
+            Debug.WriteLine("hereeee");
+        }
+
+        public Screen(GraphicsContext graphicsMetaData)
         {
             _uIEventManager = new UIEventManager();
             _uiContainers = new Stack<UIContainer>();
@@ -68,9 +98,15 @@ namespace SnakeAndLadders.UI
 
         public void Draw()
         {
+            Stack<UIContainer> tempContainers = new Stack<UIContainer>();
             foreach(var container in _uiContainers)
             {
-                container.Draw();
+                tempContainers.Push(container);
+            }
+
+            while(tempContainers.Count > 0)
+            {
+                tempContainers.Pop().Draw();
             }
         }
 

@@ -31,7 +31,7 @@ namespace SnakeAndLadders.UI
         public int Width { get; set; }
         public int Height { get; set; }
 
-        public UITextInput(GraphicsMetaData graphicsMetaData) : base(graphicsMetaData)
+        public UITextInput(GraphicsContext graphicsMetaData) : base(graphicsMetaData)
         {
             Background = Color.White;
             Padding = new Padding(10);

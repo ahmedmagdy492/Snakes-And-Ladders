@@ -19,7 +19,7 @@ namespace SnakeAndLadders.UI.UIContainers
             }
         }
 
-        public UIContainer(GraphicsMetaData graphicsMetaData) : base(graphicsMetaData)
+        public UIContainer(GraphicsContext graphicsMetaData) : base(graphicsMetaData)
         {
             _uiChildElements = new List<UIElement>();
         }

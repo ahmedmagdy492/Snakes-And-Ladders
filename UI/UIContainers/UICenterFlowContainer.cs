@@ -30,7 +30,7 @@ namespace SnakeAndLadders.UI.UIContainers
         public Padding Margin { get; set; }
         public Border Border { get; set; }
 
-        public UICenterFlowContainer(GraphicsMetaData graphicsMetaData) : base(graphicsMetaData)
+        public UICenterFlowContainer(GraphicsContext graphicsMetaData) : base(graphicsMetaData)
         {
             Position = new Vector2(0, 0);
             Margin = new Padding(0);

@@ -14,7 +14,7 @@ namespace SnakeAndLadders.UI
         public Color TextColor { get; set; }
         public SpriteFont Font { get; set; }
 
-        public UILabel(GraphicsMetaData graphicsMetaData, string text) : base(graphicsMetaData)
+        public UILabel(GraphicsContext graphicsMetaData, string text) : base(graphicsMetaData)
         {
             Text = text;
             Background = Color.White;

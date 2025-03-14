@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace SnakeAndLadders.UI
 {
-    public class GraphicsMetaData
+    public class GraphicsContext
     {
         public GraphicsDeviceManager GraphicsDeviceManager { get; set; }
         public SpriteBatch SpriteBatch { get; set; }

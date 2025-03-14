@@ -39,9 +39,9 @@ namespace SnakeAndLadders.UI
         public Padding Padding { get; set; }
         public Vector2 Position { get; set; }
 
-        protected GraphicsMetaData _graphicsMetaData;
+        protected GraphicsContext _graphicsMetaData;
 
-        public UIElement(GraphicsMetaData graphicsMetaData)
+        public UIElement(GraphicsContext graphicsMetaData)
         {
             _graphicsMetaData = graphicsMetaData;
         }
