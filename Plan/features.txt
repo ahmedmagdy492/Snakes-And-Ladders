@@ -1,0 +1,45 @@
+1.Playing Aganist AI
+
+2.Connecting to a Server:
+-player should enter server ip address
+-player should be connected to the network
+-player will join the server if the server is available
+
+3.Creating a Server:
+-player should be connected on a network
+-player can change game options:
+ - players tokens colors
+ - wait time for clients (max 30 mins).
+-player can only start the game if there is another player connected
+-player can exit if he wishes
+-the server will close after 10 mins if no one connects to it (configurable value)
+
+
+4.Game Play Multiplayer:
+-each player will be able to roll the dice in his turn (if it's not his turn the buttons will disabled)
+-after a player rolls the dice a network request should be sent
+-a player token will be moved once the player rolls the dice and another network request has to be sent
+-when the player finishes his turn another network request has to be made
+-when a player token moves and gets placed on a speficic cell a check has to be made to see whether a snake or a ladder starts here
+-when a player token reaches cell 100 game will end and that player is the winner
+
+6.Board Setup:
+-there will be a bunch of pre-built boards that will be picked up randomly when the player starts the game
+-each board will have 100 cell and the ladders and the snakes will be spread across the board dynmically
+-all players starts at the 1st cell when the game starts
+
+
+5.Network Message Format:
+this is the message format an action name which is a string and followed by a new line and then each parameter on its own line
+ActionName
+param1
+param2
+...
+
+
+Non-Funcational Requirements:
+-Encrypt Network Messages:
+ -encryption key is generated dynmically every time a client connects to the server and it's exchanged via asymmeteric encryption
+ -every other message will be encrypted using this key with symmeteric encryption
+-Compress Audio Network Messages (if there any):
+ -compress audio messages using huffman coding

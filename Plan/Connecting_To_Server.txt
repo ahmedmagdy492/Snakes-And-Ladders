@@ -1,0 +1,16 @@
+Flow:
+-the player will click on the connect to server button
+-a popup will be displayed that contains the following: label, text field to enter ip address of the server and a button to try to connect:
+    -when the player enters the ip and clicks on send the program will send a connection request to the server
+    -if the server exists and a connection is accepted:
+        -the player will be taken to the game screen
+
+
+UI Components:
+-popup dialog (deems everything behind it)
+-label
+-input field with IPV4 Validation
+-button
+
+Components:
+-Mediator

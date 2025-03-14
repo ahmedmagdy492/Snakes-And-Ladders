@@ -1,0 +1,30 @@
+Event Type:
+-MouseClick
+-KeyPress
+-TextInput
+
+UI Event:
+-EventType
+-Vector2 MousePos
+-char keyPressed
+
+Event Manager:
+-Queue<UI Event> events
+-List<UIElement> uiElements
+-PushEvent(UI Event):
+ -pushs an event into the queue
+-ProcessEvents():
+ -while events.isNotEmpty():
+  -event = queue.dequeueEvent()
+  -for each ui element in uiElements:
+   -ui element.handle event(event)
+
+Scene:
+-EventManager eventManager:
+-Draw()
+-Update(gameTime):
+ -if any keyboard key is pressed
+  -create event and push it to event manager
+ -if the mouse button is clicked:
+  -create event and push it to event manager
+ -eventManager.processEvents()

@@ -1,0 +1,21 @@
+Flow:
+-the player will click on the create server button
+-the player will be taken to the server managing screen
+-the server will start immediatly and waits for upcoming connections
+-once a connection has come it will be accepted:
+ -the start game button will no longer be deemed
+ -if the player starts the game:
+    -a network request will be sent to the client to tell it that the game has to start
+    -the player will be taken to the game screen
+-if the player clicks on exit:
+    -the server will stop and terminate
+    -the player will be taken back to home screen
+
+
+UI Components:
+-button
+-label
+-layout container
+
+Components:
+-Mediator

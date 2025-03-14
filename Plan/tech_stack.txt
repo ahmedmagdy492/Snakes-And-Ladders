@@ -1,0 +1,5 @@
+C#
+MonoGame
+UI: Custom UI Elements
+Pure C# TCP Sockets
+C# Std Libs for Encryption (AES) and (RSA)
