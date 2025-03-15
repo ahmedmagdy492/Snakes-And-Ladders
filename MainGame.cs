@@ -42,7 +42,7 @@ public class MainGame : Game
             ScreenHeight = _graphics.PreferredBackBufferHeight,
             ClearColor = Constants.CLEAR_COLOR
         };
-        _mainScreen = new Screen(_graphcisMetaData);
+        _mainScreen = new CreateServerScreen(_graphcisMetaData);
     }
 
     protected override void Update(GameTime gameTime)

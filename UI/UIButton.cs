@@ -49,6 +49,11 @@ namespace SnakeAndLadders.UI
 
         public override void HandleEvent(UIEvent e)
         {
+            if(!IsEnabled)
+            {
+                return;
+            }
+
             switch(e.Type)
             {
                 case UIEventType.MouseClick:

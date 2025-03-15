@@ -38,6 +38,7 @@ namespace SnakeAndLadders.UI
         public Color Background { get; set; }
         public Padding Padding { get; set; }
         public Vector2 Position { get; set; }
+        public bool IsEnabled { get; set; } = true;
 
         protected GraphicsContext _graphicsMetaData;
 

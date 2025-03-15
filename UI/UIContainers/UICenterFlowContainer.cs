@@ -26,9 +26,6 @@ namespace SnakeAndLadders.UI.UIContainers
         private Texture2D _borderTexture;
         private Texture2D _backgroundTexture;
         public UIFlowContainerDirection FlowDirection { get; set; } = UIFlowContainerDirection.TopToBottom;
-        public bool Scrollable { get; set; } = false;
-        public Padding Margin { get; set; }
-        public Border Border { get; set; }
 
         public UICenterFlowContainer(GraphicsContext graphicsMetaData) : base(graphicsMetaData)
         {
@@ -59,13 +56,28 @@ namespace SnakeAndLadders.UI.UIContainers
             {
                 if(FlowDirection == UIFlowContainerDirection.TopToBottom)
                 {
-                    item.Position = new Vector2(refPosition.X + ((containerWidth - (int)item.Size.X) / 2) + xi, refPosition.Y + yi);
-                    yi += (int)item.Size.Y + (int)Margin.top + (int)Margin.bottom;
+                    if(item is UIContainer)
+                    {
+                        item.Position = new Vector2(refPosition.X + ((containerWidth - ((UIContainer)item).GetWidth()) / 2) + xi, refPosition.Y + yi);
+                        yi += ((UIContainer)item).GetHeight() + (int)Margin.top + (int)Margin.bottom;
+                    }
+                    else
+                    {
+                        item.Position = new Vector2(refPosition.X + ((containerWidth - (int)item.Size.X) / 2) + xi, refPosition.Y + yi);
+                        yi += (int)item.Size.Y + (int)Margin.top + (int)Margin.bottom;
+                    }
                 }
                 else if(FlowDirection == UIFlowContainerDirection.RightToLeft)
                 {
                     item.Position = new Vector2(refPosition.X + xi, refPosition.Y + yi);
-                    xi += (int)item.Size.X + (int)Margin.left + (int)Margin.right;
+                    if(item is UIContainer)
+                    {
+                        xi += ((UIContainer)item).GetWidth() + (int)Margin.left + (int)Margin.right;
+                    }
+                    else
+                    {
+                        xi += (int)item.Size.X + (int)Margin.left + (int)Margin.right;
+                    }
                 }
 
                 item.Draw();
@@ -105,7 +117,14 @@ namespace SnakeAndLadders.UI.UIContainers
             {
                 foreach (var item in Children)
                 {
-                    totalWidth += (int)item.Size.X + (int)Margin.left + (int)Margin.right;
+                    if(item is UIContainer)
+                    {
+                        totalWidth += ((UIContainer)item).GetWidth() + (int)Margin.left + (int)Margin.right;
+                    }
+                    else
+                    {
+                        totalWidth += (int)item.Size.X + (int)Margin.left + (int)Margin.right;
+                    }
                 }
             }
             else if(FlowDirection == UIFlowContainerDirection.TopToBottom)
@@ -113,9 +132,19 @@ namespace SnakeAndLadders.UI.UIContainers
                 int maxWidth = 0;
                 foreach (var item in Children)
                 {
-                    if((int)item.Size.X > maxWidth)
+                    if(item is UIContainer)
                     {
-                        maxWidth = (int)item.Size.X;
+                        if (((UIContainer)item).GetWidth() > maxWidth)
+                        {
+                            maxWidth = ((UIContainer)item).GetWidth();
+                        }
+                    }
+                    else
+                    {
+                        if ((int)item.Size.X > maxWidth)
+                        {
+                            maxWidth = (int)item.Size.X;
+                        }
                     }
                 }
 
@@ -132,7 +161,14 @@ namespace SnakeAndLadders.UI.UIContainers
             {
                 foreach (var item in Children)
                 {
-                    totalHeight += (int)item.Size.Y + (int)Margin.top + (int)Margin.bottom;
+                    if(item is UIContainer)
+                    {
+                        totalHeight += ((UIContainer)item).GetHeight() + (int)Margin.top + (int)Margin.bottom;
+                    }
+                    else
+                    {
+                        totalHeight += (int)item.Size.Y + (int)Margin.top + (int)Margin.bottom;
+                    }
                 }
             }
             else if (FlowDirection == UIFlowContainerDirection.RightToLeft)
@@ -140,9 +176,19 @@ namespace SnakeAndLadders.UI.UIContainers
                 int maxHeight = 0;
                 foreach (var item in Children)
                 {
-                    if ((int)item.Size.Y > maxHeight)
+                    if(item is UIContainer)
                     {
-                        maxHeight = (int)item.Size.Y;
+                        if (((UIContainer)item).GetHeight() > maxHeight)
+                        {
+                            maxHeight = ((UIContainer)item).GetHeight();
+                        }
+                    }
+                    else
+                    {
+                        if ((int)item.Size.Y > maxHeight)
+                        {
+                            maxHeight = (int)item.Size.Y;
+                        }
                     }
                 }
 

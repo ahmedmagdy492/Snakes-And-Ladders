@@ -11,6 +11,9 @@ namespace SnakeAndLadders.UI.UIContainers
     public abstract class UIContainer : UIElement
     {
         protected readonly List<UIElement> _uiChildElements;
+        public bool Scrollable { get; set; } = false;
+        public Padding Margin { get; set; }
+        public Border Border { get; set; }
 
         public List<UIElement> Children { 
             get
