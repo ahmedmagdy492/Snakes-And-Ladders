@@ -18,7 +18,6 @@ namespace SnakeAndLadders.UI
 
         private void Init()
         {
-            
             UIButton gameOptionsBtn = new UIButton(_graphicsMetaData, "Game Options");
             UIAlignContainer mainContainer = new UIAlignContainer(_graphicsMetaData);
             mainContainer.Position = new Vector2(20, 20);
@@ -29,7 +28,7 @@ namespace SnakeAndLadders.UI
                 color = Color.White
             };
 
-            UICenterFlowContainer connectedPlayersContainer = new UICenterFlowContainer(_graphicsMetaData);
+            UIFlexDimContainer connectedPlayersContainer = new UIFlexDimContainer(_graphicsMetaData);
             connectedPlayersContainer.Margin = new Padding(10);
             connectedPlayersContainer.FlowDirection = UIFlowContainerDirection.RightToLeft;
             UIButton youBtn = new UIButton(_graphicsMetaData, "Your computer");
@@ -46,12 +45,19 @@ namespace SnakeAndLadders.UI
                 width = 0,
                 color = Color.White
             };
+
             bottomContainer.Margin = new Padding(10);
             bottomContainer.FlowDirection = UIFlowContainerDirection.RightToLeft;
+
             bottomContainer.Children.Add(startGameButton);
             bottomContainer.Children.Add(exitButton);
 
             mainContainer.Children.Add(gameOptionsBtn);
+
+            int yOffset = bottomContainer.GetHeight() + mainContainer.GetHeight() + (int)bottomContainer.Margin.top + (int)bottomContainer.Margin.bottom + (int)mainContainer.Margin.top + (int)mainContainer.Margin.bottom + (int)connectedPlayersContainer.Margin.top + (int)connectedPlayersContainer.Margin.bottom;
+            int xOffset = (int)mainContainer.Margin.left + (int)mainContainer.Margin.right + (int)connectedPlayersContainer.Margin.left + (int)connectedPlayersContainer.Margin.right + 20;
+            connectedPlayersContainer.Size = new Vector2(_graphicsMetaData.ScreenWidth - xOffset, _graphicsMetaData.ScreenHeight - yOffset);
+            
             mainContainer.Children.Add(connectedPlayersContainer);
             mainContainer.Children.Add(bottomContainer);
 
