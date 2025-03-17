@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SnakeAndLadders.UI
+namespace SnakeAndLadders.UI.Screens
 {
     public class MainMenuScreen : Screen
     {

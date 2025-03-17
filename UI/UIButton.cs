@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using SnakeAndLadders.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,18 +14,13 @@ namespace SnakeAndLadders.UI
     {
         private Texture2D _texture;
         private bool _isClickEventOn = false;
+        private Rectangle boundingRect;
+
+        public event Action<UIElement, UIEvent> OnClick;
 
         public string Text { get; set; }
         public Color TextColor { get; set; }
         public SpriteFont Font { get; set; }
-
-        public event Action<UIElement, UIEvent> OnClick;
-
-        private bool IsClicked(Vector2 mousePosition)
-        {
-            var surroundingRect = new Rectangle(new Point((int)Position.X, (int)Position.Y), new Point((int)Size.X, (int)Size.Y));
-            return surroundingRect.Contains(new Point((int)mousePosition.X, (int)mousePosition.Y));
-        }
 
         public UIButton(GraphicsContext graphicsMetaData, string text) : base(graphicsMetaData)
         {
@@ -39,6 +35,7 @@ namespace SnakeAndLadders.UI
             Size = new Vector2((float)width, (float)height);
             _texture = new Texture2D(_graphicsMetaData.SpriteBatch.GraphicsDevice, 1, 1);
             _texture.SetData([Color.White]);
+            boundingRect = new Rectangle(new Point((int)Position.X, (int)Position.Y), new Point((int)Size.X, (int)Size.Y));
         }
 
         public override void Draw()
@@ -57,7 +54,7 @@ namespace SnakeAndLadders.UI
             switch(e.Type)
             {
                 case UIEventType.MouseClick:
-                    if(IsClicked(e.MousePosition) && !_isClickEventOn)
+                    if(GemotryUtil.IsPointWithinRect(e.MousePosition, boundingRect) && !_isClickEventOn)
                     {
                         if(OnClick != null)
                         {
