@@ -23,6 +23,7 @@ public class MainGame : Game
         _graphics.ApplyChanges();
         Content.RootDirectory = "Content";
         IsMouseVisible = true;
+        Window.Title = "Snakes And Ladders";
         _screenNavigator = ScreenNaviagor.CreateInstance();
     }
 

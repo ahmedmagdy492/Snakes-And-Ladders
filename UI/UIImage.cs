@@ -11,23 +11,25 @@ namespace SnakeAndLadders.UI
 {
     public class UIImage : UIElement
     {
-        private readonly Texture2D _texture;
+        private Texture2D _texture;
         private bool _isClickEventOn = false;
         private Rectangle boundingRect;
-
-        public string ImageUrl { get; set; }
 
         public event Action<UIElement, UIEvent> OnClick;
 
         public UIImage(GraphicsContext graphicsMetaData, string imgUrl) : base(graphicsMetaData)
         {
             _graphicsMetaData = graphicsMetaData;
-            ImageUrl = imgUrl;
             _texture = graphicsMetaData.ContentManager.Load<Texture2D>(imgUrl);
             Size = new Vector2(_texture.Width, _texture.Height);
             Position = Vector2.Zero;
             boundingRect = new Rectangle(Position.ToPoint(), Size.ToPoint());
             Background = Color.White;
+        }
+
+        public void ReloadImage(string imgUrl)
+        {
+            _texture = _graphicsMetaData.ContentManager.Load<Texture2D>(imgUrl);
         }
 
         public override void Draw()

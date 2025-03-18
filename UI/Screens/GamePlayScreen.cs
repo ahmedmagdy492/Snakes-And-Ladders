@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using SnakeAndLadders.Helpers;
+using SnakeAndLadders.Services;
 using SnakeAndLadders.UI.UIContainers;
 using System;
 using System.Collections.Generic;
@@ -13,8 +14,12 @@ namespace SnakeAndLadders.UI.Screens
     public class GamePlayScreen : Screen
     {
         private UILabel _playerTurn;
+        private UIImage _diceImageUI;
+        private DiceRollerService _diceRollerService;
+
         public GamePlayScreen(GraphicsContext graphicsMetaData) : base(graphicsMetaData)
         {
+            _diceRollerService = new DiceRollerService();
             Init();
         }
 
@@ -22,6 +27,7 @@ namespace SnakeAndLadders.UI.Screens
         {
             _playerTurn = new UILabel(_graphicsMetaData, "Turn -> Player 1");
             UIButton rollDiceButton = new UIButton(_graphicsMetaData, "Roll Dice");
+            rollDiceButton.OnClick += RollDiceButton_OnClick;
             UIAlignContainer mainContainer = new UIAlignContainer(_graphicsMetaData);
             mainContainer.Position = new Vector2(20, 20);
             mainContainer.Margin = new Padding(10);
@@ -39,36 +45,49 @@ namespace SnakeAndLadders.UI.Screens
             boardContainer.Children.Add(uIImage);
             UIButton pauseButton = new UIButton(_graphicsMetaData, "Pause");
             pauseButton.OnClick += PauseButton_OnClick;
+            _diceImageUI = new UIImage(_graphicsMetaData, "1");
 
-            UICenterFlowContainer bottomContainer = new UICenterFlowContainer(_graphicsMetaData);
-            bottomContainer.Border = new Border
+            UICenterFlowContainer topContainer = new UICenterFlowContainer(_graphicsMetaData);
+            topContainer.Border = new Border
             {
                 width = 0,
                 color = Color.White
             };
 
-            bottomContainer.Margin = new Padding(10);
-            bottomContainer.FlowDirection = UIFlowContainerDirection.RightToLeft;
+            topContainer.Margin = new Padding(10);
+            topContainer.FlowDirection = UIFlowContainerDirection.RightToLeft;
 
-            bottomContainer.Children.Add(_playerTurn);
-            bottomContainer.Children.Add(rollDiceButton);
-            bottomContainer.Children.Add(pauseButton);
+            topContainer.Children.Add(_playerTurn);
+            topContainer.Children.Add(rollDiceButton);
+            topContainer.Children.Add(_diceImageUI);
+            topContainer.Children.Add(pauseButton);
 
             int yOffset = mainContainer.GetHeight() + mainContainer.Margin.top.ToInt() + mainContainer.Margin.bottom.ToInt() + boardContainer.Margin.top.ToInt() + boardContainer.Margin.bottom.ToInt();
 
             int xOffset = mainContainer.Margin.left.ToInt() + mainContainer.Margin.right.ToInt() + boardContainer.Margin.left.ToInt() + boardContainer.Margin.right.ToInt() + 20;
             boardContainer.Size = uIImage.Size;
 
-            mainContainer.Children.Add(bottomContainer);
+            mainContainer.Children.Add(topContainer);
             mainContainer.Children.Add(boardContainer);
 
             _uiContainers.Push(mainContainer);
         }
 
+        public override void Draw()
+        {
+            base.Draw();
+            // TODO: draw the players
+        }
+
+        private void RollDiceButton_OnClick(UIElement arg1, UIEvent arg2)
+        {
+            int diceValue = _diceRollerService.RollTheDice();
+            _diceImageUI.ReloadImage(diceValue.ToString());
+        }
+
         private void PauseButton_OnClick(UIElement arg1, UIEvent arg2)
         {
             ScreenNaviagor.CreateInstance().PopScreen();
-            Debug.WriteLine("hereeed");
         }
     }
 }
