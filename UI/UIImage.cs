@@ -26,13 +26,13 @@ namespace SnakeAndLadders.UI
             _texture = graphicsMetaData.ContentManager.Load<Texture2D>(imgUrl);
             Size = new Vector2(_texture.Width, _texture.Height);
             Position = Vector2.Zero;
-            boundingRect = new Rectangle(new Point((int)Position.X, (int)Position.Y), new Point((int)Size.X, (int)Size.Y));
+            boundingRect = new Rectangle(Position.ToPoint(), Size.ToPoint());
             Background = Color.White;
         }
 
         public override void Draw()
         {
-            _graphicsMetaData.SpriteBatch.Draw(_texture, Position, Background);
+            _graphicsMetaData.SpriteBatch.Draw(_texture, new Rectangle(Position.ToPoint(), Size.ToPoint()), Background);
         }
 
         public override void HandleEvent(UIEvent e)

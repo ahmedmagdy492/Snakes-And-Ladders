@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SnakeAndLadders.Helpers;
 
 namespace SnakeAndLadders.UI.UIContainers
 {
@@ -40,11 +41,12 @@ namespace SnakeAndLadders.UI.UIContainers
         public override void Draw()
         {
             // drawing the background
-            _graphicsMetaData.SpriteBatch.Draw(_backgroundTexture, new Rectangle((int)Position.X, (int)Position.Y, GetWidth(), GetHeight()), Color.White);
+            _graphicsMetaData.SpriteBatch.Draw(_backgroundTexture, new Rectangle(Position.ToPoint(), new Point(GetWidth(), GetHeight())), Color.White);
 
             Vector2 refPosition = new Vector2(Position.X, Position.Y);
             int yi = 0;
             int containerWidth = GetWidth(), containerHeight = GetHeight();
+
             foreach (var item in Children)
             {
                 if (Alignment == ContainerAlignment.AlignLeft)
@@ -52,12 +54,12 @@ namespace SnakeAndLadders.UI.UIContainers
                     if (item is UIContainer)
                     {
                         item.Position = new Vector2(refPosition.X, refPosition.Y + yi);
-                        yi += ((UIContainer)item).GetHeight() + (int)Margin.top + (int)Margin.bottom;
+                        yi += ((UIContainer)item).GetHeight() + Margin.top.ToInt() + Margin.bottom.ToInt();
                     }
                     else
                     {
                         item.Position = new Vector2(refPosition.X, refPosition.Y + yi);
-                        yi += (int)item.Size.Y + (int)Margin.top + (int)Margin.bottom;
+                        yi += item.Size.Y.ToInt() + Margin.top.ToInt() + Margin.bottom.ToInt();
                     }
                 }
                 else if (Alignment == ContainerAlignment.AlignRight)
@@ -65,12 +67,12 @@ namespace SnakeAndLadders.UI.UIContainers
                     if (item is UIContainer)
                     {
                         item.Position = new Vector2(refPosition.X + containerWidth - ((UIContainer)item).GetWidth(), refPosition.Y + yi);
-                        yi += ((UIContainer)item).GetHeight() + (int)Margin.top + (int)Margin.bottom;
+                        yi += ((UIContainer)item).GetHeight() + Margin.top.ToInt() + Margin.bottom.ToInt();
                     }
                     else
                     {
                         item.Position = new Vector2(refPosition.X + containerWidth - item.Size.X, refPosition.Y + yi);
-                        yi += (int)item.Size.Y + (int)Margin.top + (int)Margin.bottom;
+                        yi += item.Size.Y.ToInt() + Margin.top.ToInt() + Margin.bottom.ToInt();
                     }
                 }
 
@@ -80,20 +82,25 @@ namespace SnakeAndLadders.UI.UIContainers
             if (Border.width > 0)
             {
                 // top
-                _graphicsMetaData.SpriteBatch.Draw(_borderTexture, new Rectangle((int)Position.X, (int)Position.Y, GetWidth(), Border.width), Border.color);
+                _graphicsMetaData.SpriteBatch.Draw(_borderTexture, new Rectangle(Position.ToPoint(), new Point(GetWidth(), Border.width)), Border.color);
 
                 //// Bottom
-                _graphicsMetaData.SpriteBatch.Draw(_borderTexture, new Rectangle((int)Position.X, (int)Position.Y + GetHeight() - Border.width, GetWidth(), Border.width), Border.color);
+                _graphicsMetaData.SpriteBatch.Draw(_borderTexture, new Rectangle(Position.X.ToInt(), Position.Y.ToInt() + GetHeight() - Border.width, GetWidth(), Border.width), Border.color);
 
                 //// Left
-                _graphicsMetaData.SpriteBatch.Draw(_borderTexture, new Rectangle((int)Position.X, (int)Position.Y, Border.width, GetHeight()), Border.color);
+                _graphicsMetaData.SpriteBatch.Draw(_borderTexture, new Rectangle(Position.ToPoint(), new Point(Border.width, GetHeight())), Border.color);
 
                 //// Right
-                _graphicsMetaData.SpriteBatch.Draw(_borderTexture, new Rectangle((int)Position.X + GetWidth() - Border.width, (int)Position.Y, Border.width, GetHeight()), Border.color);
+                _graphicsMetaData.SpriteBatch.Draw(_borderTexture, new Rectangle(Position.X.ToInt() + GetWidth() - Border.width, Position.Y.ToInt(), Border.width, GetHeight()), Border.color);
             }
         }
+
         public override void HandleEvent(UIEvent e)
         {
+            foreach (var item in Children)
+            {
+                item.HandleEvent(e);
+            }
         }
 
         public override void Update(GameTime gameTime)

@@ -1,7 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
+using SnakeAndLadders.Helpers;
 using SnakeAndLadders.UI.UIContainers;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,7 +13,6 @@ namespace SnakeAndLadders.UI.Screens
     public class GamePlayScreen : Screen
     {
         private UILabel _playerTurn;
-
         public GamePlayScreen(GraphicsContext graphicsMetaData) : base(graphicsMetaData)
         {
             Init();
@@ -37,6 +38,7 @@ namespace SnakeAndLadders.UI.Screens
             UIImage uIImage = new UIImage(_graphicsMetaData, "board");
             boardContainer.Children.Add(uIImage);
             UIButton pauseButton = new UIButton(_graphicsMetaData, "Pause");
+            pauseButton.OnClick += PauseButton_OnClick;
 
             UICenterFlowContainer bottomContainer = new UICenterFlowContainer(_graphicsMetaData);
             bottomContainer.Border = new Border
@@ -52,14 +54,21 @@ namespace SnakeAndLadders.UI.Screens
             bottomContainer.Children.Add(rollDiceButton);
             bottomContainer.Children.Add(pauseButton);
 
-            int yOffset = mainContainer.GetHeight() + (int)mainContainer.Margin.top + (int)mainContainer.Margin.bottom + (int)boardContainer.Margin.top + (int)boardContainer.Margin.bottom;
-            int xOffset = (int)mainContainer.Margin.left + (int)mainContainer.Margin.right + (int)boardContainer.Margin.left + (int)boardContainer.Margin.right + 20;
+            int yOffset = mainContainer.GetHeight() + mainContainer.Margin.top.ToInt() + mainContainer.Margin.bottom.ToInt() + boardContainer.Margin.top.ToInt() + boardContainer.Margin.bottom.ToInt();
+
+            int xOffset = mainContainer.Margin.left.ToInt() + mainContainer.Margin.right.ToInt() + boardContainer.Margin.left.ToInt() + boardContainer.Margin.right.ToInt() + 20;
             boardContainer.Size = uIImage.Size;
 
             mainContainer.Children.Add(bottomContainer);
             mainContainer.Children.Add(boardContainer);
 
             _uiContainers.Push(mainContainer);
+        }
+
+        private void PauseButton_OnClick(UIElement arg1, UIEvent arg2)
+        {
+            ScreenNaviagor.CreateInstance().PopScreen();
+            Debug.WriteLine("hereeed");
         }
     }
 }

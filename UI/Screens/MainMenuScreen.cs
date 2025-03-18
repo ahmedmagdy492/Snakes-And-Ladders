@@ -28,6 +28,7 @@ namespace SnakeAndLadders.UI.Screens
             playWithFriendBtn.OnClick += PlayWithFriendBtn_OnClick;
 
             UIButton createServerBtn = new UIButton(_graphicsMetaData, "Create a Server");
+            createServerBtn.OnClick += CreateServerBtn_OnClick;
 
             UICenterFlowContainer mainContainer = new UICenterFlowContainer(_graphicsMetaData);
             mainContainer.Border = new Border { width = 0, color = Color.White };
@@ -40,35 +41,19 @@ namespace SnakeAndLadders.UI.Screens
             _uiContainers.Push(mainContainer);
         }
 
-        private void PlayWithFriendBtn_OnClick(UIElement arg1, UIEvent arg2)
+        private void CreateServerBtn_OnClick(UIElement arg1, UIEvent arg2)
         {
-            UICenterFlowContainer connectDialogBox = new UICenterFlowContainer(_graphicsMetaData);
-
-            connectDialogBox.Background = Color.Wheat;
-            connectDialogBox.Margin = new Padding(20);
-            UILabel uILabel = new UILabel(_graphicsMetaData, "Enter Friend IP");
-            UITextInput ipAddress = new UITextInput(_graphicsMetaData);
-
-            UIButton connectButton = new UIButton(_graphicsMetaData, "Connect");
-            UIButton closeButton = new UIButton(_graphicsMetaData, "Close");
-            closeButton.OnClick += CloseButton_OnClick;
-
-            connectDialogBox.Children.Add(uILabel);
-            connectDialogBox.Children.Add(ipAddress);
-            connectDialogBox.Children.Add(connectButton);
-            connectDialogBox.Children.Add(closeButton);
-            connectDialogBox.Position = new Vector2((_graphicsMetaData.ScreenWidth - connectDialogBox.GetWidth()) / 2, 200);
-            _uiContainers.Push(connectDialogBox);
+            ScreenNaviagor.CreateInstance().PushScreen(new CreateServerScreen(_graphicsMetaData));
         }
 
-        private void CloseButton_OnClick(UIElement arg1, UIEvent arg2)
+        private void PlayWithFriendBtn_OnClick(UIElement arg1, UIEvent arg2)
         {
-            _uiContainers.Pop();
+            ScreenNaviagor.CreateInstance().PushScreen(new ConnectToServerDialogBox(_graphicsMetaData));
         }
 
         private void PlayVersusComp_OnClick(UIElement arg1, UIEvent arg2)
         {
-            Debug.WriteLine("hereeee");
+            ScreenNaviagor.CreateInstance().PushScreen(new GamePlayScreen(_graphicsMetaData));
         }
     }
 }

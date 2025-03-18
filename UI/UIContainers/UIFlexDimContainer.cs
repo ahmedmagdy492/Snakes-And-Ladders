@@ -87,6 +87,10 @@ namespace SnakeAndLadders.UI.UIContainers
         }
         public override void HandleEvent(UIEvent e)
         {
+            foreach (var item in Children)
+            {
+                item.HandleEvent(e);
+            }
         }
 
         public override void Update(GameTime gameTime)

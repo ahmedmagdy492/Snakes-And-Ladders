@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using SnakeAndLadders.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -47,7 +48,7 @@ namespace SnakeAndLadders.UI.UIContainers
         public override void Draw()
         {
             // drawing the background
-            _graphicsMetaData.SpriteBatch.Draw(_backgroundTexture, new Rectangle((int)Position.X, (int)Position.Y, GetWidth(), GetHeight()), Color.White);
+            _graphicsMetaData.SpriteBatch.Draw(_backgroundTexture, new Rectangle(Position.ToPoint(), new Point(GetWidth(), GetHeight())), Color.White);
 
             Vector2 refPosition = new Vector2(Position.X, Position.Y);
             int xi = 0, yi = 0;
@@ -59,12 +60,12 @@ namespace SnakeAndLadders.UI.UIContainers
                     if(item is UIContainer)
                     {
                         item.Position = new Vector2(refPosition.X + ((containerWidth - ((UIContainer)item).GetWidth()) / 2) + xi, refPosition.Y + yi);
-                        yi += ((UIContainer)item).GetHeight() + (int)Margin.top + (int)Margin.bottom;
+                        yi += ((UIContainer)item).GetHeight() + Margin.top.ToInt() + Margin.bottom.ToInt();
                     }
                     else
                     {
-                        item.Position = new Vector2(refPosition.X + ((containerWidth - (int)item.Size.X) / 2) + xi, refPosition.Y + yi);
-                        yi += (int)item.Size.Y + (int)Margin.top + (int)Margin.bottom;
+                        item.Position = new Vector2(refPosition.X + ((containerWidth - item.Size.X.ToInt()) / 2) + xi, refPosition.Y + yi);
+                        yi += item.Size.Y.ToInt() + Margin.top.ToInt() + Margin.bottom.ToInt();
                     }
                 }
                 else if(FlowDirection == UIFlowContainerDirection.RightToLeft)
@@ -72,11 +73,11 @@ namespace SnakeAndLadders.UI.UIContainers
                     item.Position = new Vector2(refPosition.X + xi, refPosition.Y + yi);
                     if(item is UIContainer)
                     {
-                        xi += ((UIContainer)item).GetWidth() + (int)Margin.left + (int)Margin.right;
+                        xi += ((UIContainer)item).GetWidth() + Margin.left.ToInt() + Margin.right.ToInt();
                     }
                     else
                     {
-                        xi += (int)item.Size.X + (int)Margin.left + (int)Margin.right;
+                        xi += item.Size.X.ToInt() + Margin.left.ToInt() + Margin.right.ToInt();
                     }
                 }
 
@@ -100,6 +101,10 @@ namespace SnakeAndLadders.UI.UIContainers
         }
         public override void HandleEvent(UIEvent e)
         {
+            foreach (var item in Children)
+            {
+                item.HandleEvent(e);
+            }
         }
 
         public override void Update(GameTime gameTime)
@@ -119,11 +124,11 @@ namespace SnakeAndLadders.UI.UIContainers
                 {
                     if(item is UIContainer)
                     {
-                        totalWidth += ((UIContainer)item).GetWidth() + (int)Margin.left + (int)Margin.right;
+                        totalWidth += ((UIContainer)item).GetWidth() + Margin.left.ToInt() + Margin.right.ToInt();
                     }
                     else
                     {
-                        totalWidth += (int)item.Size.X + (int)Margin.left + (int)Margin.right;
+                        totalWidth += (int)item.Size.X + Margin.left.ToInt() + Margin.right.ToInt();
                     }
                 }
             }
@@ -141,14 +146,14 @@ namespace SnakeAndLadders.UI.UIContainers
                     }
                     else
                     {
-                        if ((int)item.Size.X > maxWidth)
+                        if (item.Size.X.ToInt() > maxWidth)
                         {
-                            maxWidth = (int)item.Size.X;
+                            maxWidth = item.Size.X.ToInt();
                         }
                     }
                 }
 
-                return maxWidth + (int)Margin.left + (int)Margin.right + Border.width;
+                return maxWidth + Margin.left.ToInt() + Margin.right.ToInt() + Border.width;
             }
 
             return totalWidth + Border.width;
@@ -163,11 +168,11 @@ namespace SnakeAndLadders.UI.UIContainers
                 {
                     if(item is UIContainer)
                     {
-                        totalHeight += ((UIContainer)item).GetHeight() + (int)Margin.top + (int)Margin.bottom;
+                        totalHeight += ((UIContainer)item).GetHeight() + Margin.top.ToInt() + Margin.bottom.ToInt();
                     }
                     else
                     {
-                        totalHeight += (int)item.Size.Y + (int)Margin.top + (int)Margin.bottom;
+                        totalHeight += item.Size.Y.ToInt() + Margin.top.ToInt() + Margin.bottom.ToInt();
                     }
                 }
             }
@@ -185,14 +190,14 @@ namespace SnakeAndLadders.UI.UIContainers
                     }
                     else
                     {
-                        if ((int)item.Size.Y > maxHeight)
+                        if (item.Size.Y.ToInt() > maxHeight)
                         {
-                            maxHeight = (int)item.Size.Y;
+                            maxHeight = item.Size.Y.ToInt();
                         }
                     }
                 }
 
-                return maxHeight + (int)Margin.top + (int)Margin.bottom + Border.width;
+                return maxHeight + Margin.top.ToInt() + Margin.bottom.ToInt() + Border.width;
             }
 
             return totalHeight + Border.width;

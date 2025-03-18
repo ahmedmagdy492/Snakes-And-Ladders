@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+using SnakeAndLadders.Helpers;
 using SnakeAndLadders.UI.UIContainers;
 using System;
 using System.Collections.Generic;
@@ -38,6 +39,7 @@ namespace SnakeAndLadders.UI.Screens
             connectedPlayersContainer.Children.Add(waitingBtn);
             UIButton startGameButton = new UIButton(_graphicsMetaData, "Start Game");
             UIButton exitButton = new UIButton(_graphicsMetaData, "Exit");
+            exitButton.OnClick += ExitButton_OnClick;
 
             UICenterFlowContainer bottomContainer = new UICenterFlowContainer(_graphicsMetaData);
             bottomContainer.Border = new Border
@@ -54,14 +56,20 @@ namespace SnakeAndLadders.UI.Screens
 
             mainContainer.Children.Add(gameOptionsBtn);
 
-            int yOffset = bottomContainer.GetHeight() + mainContainer.GetHeight() + (int)bottomContainer.Margin.top + (int)bottomContainer.Margin.bottom + (int)mainContainer.Margin.top + (int)mainContainer.Margin.bottom + (int)connectedPlayersContainer.Margin.top + (int)connectedPlayersContainer.Margin.bottom;
-            int xOffset = (int)mainContainer.Margin.left + (int)mainContainer.Margin.right + (int)connectedPlayersContainer.Margin.left + (int)connectedPlayersContainer.Margin.right + 20;
+            int yOffset = bottomContainer.GetHeight() + mainContainer.GetHeight() + bottomContainer.Margin.top.ToInt() + bottomContainer.Margin.bottom.ToInt() + mainContainer.Margin.top.ToInt() + mainContainer.Margin.bottom.ToInt() + connectedPlayersContainer.Margin.top.ToInt() + connectedPlayersContainer.Margin.bottom.ToInt();
+
+            int xOffset = mainContainer.Margin.left.ToInt() + mainContainer.Margin.right.ToInt() + connectedPlayersContainer.Margin.left.ToInt() + connectedPlayersContainer.Margin.right.ToInt() + 20;
             connectedPlayersContainer.Size = new Vector2(_graphicsMetaData.ScreenWidth - xOffset, _graphicsMetaData.ScreenHeight - yOffset);
             
             mainContainer.Children.Add(connectedPlayersContainer);
             mainContainer.Children.Add(bottomContainer);
 
             _uiContainers.Push(mainContainer);
+        }
+
+        private void ExitButton_OnClick(UIElement arg1, UIEvent arg2)
+        {
+            ScreenNaviagor.CreateInstance().PopScreen();
         }
     }
 }

@@ -28,11 +28,13 @@ namespace SnakeAndLadders.UI.Screens
         protected List<UIElement> GetUIElementsFromContainers()
         {
             List<UIElement> uIElements = new List<UIElement>();
-            UIContainer topContainer = _uiContainers.Peek();
 
-            foreach (var item in topContainer.Children)
+            foreach(var container in _uiContainers)
             {
-                uIElements.Add(item);
+                foreach(var item in container.Children)
+                {
+                    uIElements.Add(item);
+                }
             }
 
             return uIElements;

@@ -10,12 +10,12 @@ namespace SnakeAndLadders.UI
 {
     public struct Padding
     {
-        public readonly double top;
-        public readonly double bottom;
-        public readonly double left;
-        public readonly double right;
+        public readonly float top;
+        public readonly float bottom;
+        public readonly float left;
+        public readonly float right;
 
-        public Padding(double top, double bottom, double left, double right)
+        public Padding(float top, float bottom, float left, float right)
         {
             this.top = top;
             this.bottom = bottom;
@@ -23,11 +23,11 @@ namespace SnakeAndLadders.UI
             this.right = right;
         }
 
-        public Padding(double vertical, double horizental) : this(vertical, vertical, horizental, horizental)
+        public Padding(float vertical, float horizental) : this(vertical, vertical, horizental, horizental)
         {
         }
 
-        public Padding(int all) : this(all, all)
+        public Padding(float all) : this(all, all)
         {
         }
     }

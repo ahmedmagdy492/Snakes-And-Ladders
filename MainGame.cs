@@ -11,9 +11,9 @@ public class MainGame : Game
 {
     private GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
-    private Screen _mainScreen;
+    private ScreenNaviagor _screenNavigator;
     private SpriteFont _font;
-    private GraphicsContext _graphcisMetaData;
+    private GraphicsContext _graphicsContext;
 
     public MainGame()
     {
@@ -23,6 +23,7 @@ public class MainGame : Game
         _graphics.ApplyChanges();
         Content.RootDirectory = "Content";
         IsMouseVisible = true;
+        _screenNavigator = ScreenNaviagor.CreateInstance();
     }
 
     protected override void Initialize()
@@ -34,7 +35,7 @@ public class MainGame : Game
     {
         _spriteBatch = new SpriteBatch(GraphicsDevice);
         _font = Content.Load<SpriteFont>("MainFont");
-        _graphcisMetaData = new GraphicsContext
+        _graphicsContext = new GraphicsContext
         {
             Font = _font,
             GraphicsDeviceManager = _graphics,
@@ -44,7 +45,7 @@ public class MainGame : Game
             ScreenHeight = _graphics.PreferredBackBufferHeight,
             ClearColor = Constants.CLEAR_COLOR
         };
-        _mainScreen = new GamePlayScreen(_graphcisMetaData);
+        _screenNavigator.PushScreen(new MainMenuScreen(_graphicsContext));
     }
 
     protected override void Update(GameTime gameTime)
@@ -52,7 +53,7 @@ public class MainGame : Game
         if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
             Exit();
 
-        _mainScreen.Update(gameTime);
+        _screenNavigator.Update(gameTime);
 
         base.Update(gameTime);
     }
@@ -63,7 +64,7 @@ public class MainGame : Game
 
         _spriteBatch.Begin();
 
-        _mainScreen.Draw();
+        _screenNavigator.Draw();
         //Texture2D _texture = new Texture2D(GraphicsDevice, 1, 1);
         //_texture.SetData([Color.White]);
         //int rowsCount = 10, colsCount = 20;

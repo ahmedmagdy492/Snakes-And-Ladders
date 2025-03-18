@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 
 namespace SnakeAndLadders.Helpers
 {
-    public static class GemotryUtil
+    public static class Vector2Extension
     {
-        public static bool IsPointWithinRect(Vector2 mousePosition, Rectangle rect)
+        public static Point ToPoint(this Vector2 value)
         {
-            return rect.Contains(mousePosition.ToPoint());
+            return new Point(value.X.ToInt(), value.Y.ToInt());
         }
     }
 }

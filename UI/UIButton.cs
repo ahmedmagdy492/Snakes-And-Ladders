@@ -14,7 +14,6 @@ namespace SnakeAndLadders.UI
     {
         private Texture2D _texture;
         private bool _isClickEventOn = false;
-        private Rectangle boundingRect;
 
         public event Action<UIElement, UIEvent> OnClick;
 
@@ -35,13 +34,12 @@ namespace SnakeAndLadders.UI
             Size = new Vector2((float)width, (float)height);
             _texture = new Texture2D(_graphicsMetaData.SpriteBatch.GraphicsDevice, 1, 1);
             _texture.SetData([Color.White]);
-            boundingRect = new Rectangle(new Point((int)Position.X, (int)Position.Y), new Point((int)Size.X, (int)Size.Y));
         }
 
         public override void Draw()
         {
-            _graphicsMetaData.SpriteBatch.Draw(_texture, new Rectangle(new Point((int)Position.X, (int)Position.Y), new Point((int)Size.X, (int)Size.Y)), Background);
-            _graphicsMetaData.SpriteBatch.DrawString(Font, Text, new Vector2((float)Padding.left + Position.X, (float)Padding.top + Position.Y), TextColor);
+            _graphicsMetaData.SpriteBatch.Draw(_texture, new Rectangle(Position.ToPoint(), Size.ToPoint()), Background);
+            _graphicsMetaData.SpriteBatch.DrawString(Font, Text, new Vector2(Padding.left + Position.X, Padding.top + Position.Y), TextColor);
         }
 
         public override void HandleEvent(UIEvent e)
@@ -54,7 +52,7 @@ namespace SnakeAndLadders.UI
             switch(e.Type)
             {
                 case UIEventType.MouseClick:
-                    if(GemotryUtil.IsPointWithinRect(e.MousePosition, boundingRect) && !_isClickEventOn)
+                    if(GemotryUtil.IsPointWithinRect(e.MousePosition, new Rectangle(Position.ToPoint(), Size.ToPoint())) && !_isClickEventOn)
                     {
                         if(OnClick != null)
                         {
@@ -74,7 +72,6 @@ namespace SnakeAndLadders.UI
 
         public override void Update(GameTime gameTime)
         {
-
         }
     }
 }
