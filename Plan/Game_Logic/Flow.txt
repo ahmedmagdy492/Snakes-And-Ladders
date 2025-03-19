@@ -17,11 +17,23 @@ CellDetails:
 -hasLadder
 -ladderEndCellNo (-1 if none)
 -snakeEndCellNo (-1 if none)
+-position
 
-MapMetaData:
+Map:
 -Dictionary<cell_no, CellDetails>
+-List<cell_no> cornerCells (e.g [20, 40, 41, 60, 61])
+-winCellNo
+-startCellNo
 
 Player:
 -playerNo
 -texture
 -currentCellNo
+
+
+Game Logic:
+-List<Map> maps
+-List<Player> players
+-currentMap: Map
+-playerTurnNo
+-MoveCurrentPlayer()
