@@ -1,0 +1,27 @@
+VS Computer:
+-Turn is determined (say for example player 1)
+-all buttons are now available for player 1
+-player 1 will roll the dice
+-a number will be shown
+-player1 marker will move what ever many steps the dice has rolled:
+    -the move will take into consideration the spaces between each cell
+    -if a cell has the 2 players, the two players will be aligned in a way to make both of them visable
+    -the player object has to be updated with the current cel no
+    -after the movement is done, we have to check if this specific cell has a snake if so we need to move it down or a ladder we have to move it up
+    -if the player reaches the cell no 200 he will win and the game has to reset
+-afterwards the turn is going to be changed to the other player
+
+CellDetails:
+-cellNo
+-hasSnake
+-hasLadder
+-ladderEndCellNo (-1 if none)
+-snakeEndCellNo (-1 if none)
+
+MapMetaData:
+-Dictionary<cell_no, CellDetails>
+
+Player:
+-playerNo
+-texture
+-currentCellNo
