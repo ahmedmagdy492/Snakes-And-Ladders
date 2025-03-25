@@ -101,7 +101,24 @@ namespace SnakeAndLadders.UI.Screens
             _curGameState = GameState.Playing;
             _gameLogic.OnWining += GameLogic_OnWining;
             ChangePlayersColors();
-            _gameStatusLabel.Text = _gameLogic.GetCurrentPlayingPlayer().PlayerName + " is Playing ...";
+            var currentPlayer = _gameLogic.GetCurrentPlayingPlayer();
+            _gameStatusLabel.Text = currentPlayer.PlayerName + " is Playing ...";
+            if(currentPlayer.PlayerName == "Computer")
+            {
+                PlayComputer();
+            }
+        }
+
+        private void PlayComputer()
+        {
+            _rollDiceButton.IsEnabled = false;
+            Task.Run(async () =>
+            {
+                _gameStatusLabel.Text = "Computer is Playing ...";
+                await Task.Delay(3000);
+                RollDiceButton_OnClick(_rollDiceButton, null);
+                _rollDiceButton.IsEnabled = true;
+            });
         }
 
         private void GameLogic_OnWining(Player wonPlayer)
@@ -154,14 +171,7 @@ namespace SnakeAndLadders.UI.Screens
                     ChangePlayersColors();
                     if(_gameLogic.GetCurrentPlayingPlayer().PlayerName == "Computer")
                     {
-                        _rollDiceButton.IsEnabled = false;
-                        Task.Run(async () =>
-                        {
-                            _gameStatusLabel.Text = "Computer is Playing ...";
-                            await Task.Delay(3000);
-                            RollDiceButton_OnClick(_rollDiceButton, null);
-                            _rollDiceButton.IsEnabled = true;
-                        });
+                        PlayComputer();
                     }
                     else
                     {
