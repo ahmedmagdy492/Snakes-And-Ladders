@@ -1,6 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Media;
 using SnakeAndLadders.UI.UIContainers;
 using System;
 using System.Collections.Generic;
@@ -14,28 +16,43 @@ namespace SnakeAndLadders.UI.Screens
     public class MainMenuScreen : Screen
     {
         private Texture2D _bgTexture;
+        private readonly Song _bgSE;
         public MainMenuScreen(GraphicsContext graphicsMetaData) : base(graphicsMetaData)
         {
             Init();
             _bgTexture = _graphicsMetaData.ContentManager.Load<Texture2D>("bg");
+            _bgSE = _graphicsMetaData.ContentManager.Load<Song>("bg_sound");
+            MediaPlayer.Volume = 0.2f;
+            MediaPlayer.IsRepeating = true;
+            MediaPlayer.Play(_bgSE);
         }
 
         private void Init()
         {
-            //UILabel gameName = new UILabel(_graphicsMetaData, "Snakes And Ladders");
-            //gameName.TextColor = Color.White;
+            UILabel gamename = new UILabel(_graphicsMetaData, "");
             UIButton vsComputerBtn = new UIButton(_graphicsMetaData, "VS Computer");
             vsComputerBtn.OnClick += PlayVersusComp_OnClick;
+            vsComputerBtn.TextColor = Color.YellowGreen;
+            vsComputerBtn.Background = Color.Black;
 
             UIButton playWithFriendBtn = new UIButton(_graphicsMetaData, "Play With Friend");
             playWithFriendBtn.OnClick += PlayWithFriendBtn_OnClick;
+            playWithFriendBtn.TextColor = Color.YellowGreen;
+            playWithFriendBtn.Background = Color.Black;
 
             UIButton createServerBtn = new UIButton(_graphicsMetaData, "Create a Server");
             createServerBtn.OnClick += CreateServerBtn_OnClick;
+            createServerBtn.TextColor = Color.YellowGreen;
+            createServerBtn.Background = Color.Black;
 
             UICenterFlowContainer mainContainer = new UICenterFlowContainer(_graphicsMetaData);
             mainContainer.Border = new Border { width = 0, color = Color.White };
             mainContainer.Margin = new Padding(top: 20, right: 0, left: 0, bottom: 0);
+            mainContainer.Children.Add(gamename);
+            mainContainer.Children.Add(gamename);
+            mainContainer.Children.Add(gamename);
+            mainContainer.Children.Add(gamename);
+            mainContainer.Children.Add(gamename);
             mainContainer.Children.Add(vsComputerBtn);
             mainContainer.Children.Add(playWithFriendBtn);
             mainContainer.Children.Add(createServerBtn);

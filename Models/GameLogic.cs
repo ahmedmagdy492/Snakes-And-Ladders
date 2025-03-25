@@ -4,6 +4,13 @@ using System.Collections.Generic;
 
 namespace SnakeAndLadders.Models
 {
+    public enum GameState 
+    {
+        Playing,
+        Paused,
+        Ended
+    }
+
     public class GameLogic
     {
         private readonly List<SnakesLaddersMap> maps;
@@ -22,21 +29,16 @@ namespace SnakeAndLadders.Models
         }
 
         private void ResetPlayersPositions()
-        {
-            foreach (var player in _players)
-            {
-                player.Position = _currentMap._cellPositions[1];
-            }
+        { 
+            _players[0].Position = _currentMap._cellPositions[1];
+            _players[1].Position = _currentMap._cellPositions[1];
+            _players[1].Position = new Vector2(_players[1].Position.X + 10, _players[1].Position.Y);
         }
 
         private int DetermineNextPlayerCell(int newPlayerCellNo)
         {
             if (newPlayerCellNo >= _currentMap.WinCell)
             {
-                if (OnWining != null)
-                {
-                    OnWining(_currentPlayingPlayer);
-                }
                 return _currentMap.WinCell;
             }
 
@@ -65,7 +67,7 @@ namespace SnakeAndLadders.Models
             _currentMap = new SnakesLaddersMap
             {
                 StartCell = 1,
-                WinCell = 200,
+                WinCell = 100,
             };
             #region filling out a default map 
             _currentMap.AddCellDetail(5, new CellDetails
@@ -251,9 +253,10 @@ namespace SnakeAndLadders.Models
             ResetPlayersPositions();
         }
 
-        public string GetCurrentPlayingPlayerName()
+        public void ResetGame()
         {
-            return _currentPlayingPlayer.PlayerName;
+            ResetPlayersPositions();
+            _currentPlayingPlayer = DeterminePlayerTurn();
         }
 
         public Player GetCurrentPlayingPlayer()
@@ -269,10 +272,28 @@ namespace SnakeAndLadders.Models
         public void MoveCurrentPlayingPlayer(int diceValue)
         {
             int newPlayerCellNo = _currentPlayingPlayer.CurrentCellNo + diceValue;
-            int oldPlayerCellNo = _currentPlayingPlayer.CurrentCellNo;
             _currentPlayingPlayer.MovingCellNo = _currentPlayingPlayer.CurrentCellNo;
             _currentPlayingPlayer.CurrentCellNo = DetermineNextPlayerCell(newPlayerCellNo);
-            _currentPlayingPlayer.Position = _currentMap._cellPositions[_currentPlayingPlayer.CurrentCellNo];
+            if(_currentPlayingPlayer.CurrentCellNo >= _currentMap.WinCell)
+            {
+                if (OnWining != null)
+                {
+                    OnWining(_currentPlayingPlayer);
+                }
+            }
+            else
+            {
+                _currentPlayingPlayer.Position = _currentMap._cellPositions[_currentPlayingPlayer.CurrentCellNo];
+                var otherPlayer = _currentPlayingPlayer == _players[0] ? _players[1] : _players[0];
+                if (_currentPlayingPlayer.CurrentCellNo == otherPlayer.CurrentCellNo)
+                {
+                    _currentPlayingPlayer.Position = new Vector2(_currentPlayingPlayer.Position.X + 10, _currentPlayingPlayer.Position.Y);
+                }
+                else
+                {
+                    _currentPlayingPlayer.Position = new Vector2(_currentPlayingPlayer.Position.X, _currentPlayingPlayer.Position.Y);
+                }
+            }
         }
 
         public void ChangePlayerTurn()

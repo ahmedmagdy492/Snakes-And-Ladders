@@ -37,6 +37,7 @@ namespace SnakeAndLadders.UI.Screens
             UIButton waitingBtn = new UIButton(_graphicsMetaData, "Wating for another player to connect ...");
             connectedPlayersContainer.Children.Add(youBtn);
             connectedPlayersContainer.Children.Add(waitingBtn);
+            
             UIButton startGameButton = new UIButton(_graphicsMetaData, "Start Game");
             UIButton exitButton = new UIButton(_graphicsMetaData, "Exit");
             exitButton.OnClick += ExitButton_OnClick;

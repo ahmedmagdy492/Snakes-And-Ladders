@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using SnakeAndLadders.Helpers;
 using SnakeAndLadders.Models;
 using SnakeAndLadders.Services;
@@ -18,18 +19,23 @@ namespace SnakeAndLadders.UI.Screens
         private GameLogic _gameLogic;
         private readonly List<Player> _players;
         private bool _isPlayingAnimation = false;
+        private readonly SoundEffect _diceSE;
+        private GameState _curGameState;
 
         public GamePlayScreen(GraphicsContext graphicsMetaData, List<Player> players) : base(graphicsMetaData)
         {
             _players = players;
             _diceRollerService = new DiceRollerService();
+            _diceSE = _graphicsMetaData.ContentManager.Load<SoundEffect>("dice-roll");
             Init();
         }
 
         private void Init()
         {
             _player1Name = new UILabel(_graphicsMetaData, _players[0].PlayerName);
+            UIImage player1Img = new UIImage(_graphicsMetaData, "p1");
             _player2Name = new UILabel(_graphicsMetaData, _players[1].PlayerName);
+            UIImage player2Img = new UIImage(_graphicsMetaData, "p2");
             UIButton rollDiceButton = new UIButton(_graphicsMetaData, "Roll Dice");
             rollDiceButton.OnClick += RollDiceButton_OnClick;
             UICenterFlowContainer mainContainer = new UICenterFlowContainer(_graphicsMetaData);
@@ -68,8 +74,6 @@ namespace SnakeAndLadders.UI.Screens
 
             buttonsPanel.Margin = new Padding(10);
 
-            buttonsPanel.Children.Add(_player1Name);
-            buttonsPanel.Children.Add(_player2Name);
             buttonsPanel.Children.Add(rollDiceButton);
             buttonsPanel.Children.Add(_diceImageUI);
             buttonsPanel.Children.Add(pauseButton);
@@ -82,18 +86,40 @@ namespace SnakeAndLadders.UI.Screens
 
             mainContainer.Children.Add(boardContainer);
             mainContainer.Children.Add(leftPanel);
+            mainContainer.Children.Add(player1Img);
+            mainContainer.Children.Add(_player1Name);
+            mainContainer.Children.Add(player2Img);
+            mainContainer.Children.Add(_player2Name);
 
             _uiContainers.Push(mainContainer);
 
             _gameLogic = new GameLogic(_players);
-            var currentPlayer = _gameLogic.GetCurrentPlayingPlayer();
-            _player1Name.TextColor = currentPlayer.PlayerName == _player1Name.Text ? Color.YellowGreen : Color.Red;
-            _player2Name.TextColor = currentPlayer.PlayerName == _player2Name.Text ? Color.YellowGreen : Color.Red;
+            _curGameState = GameState.Playing;
+            _gameLogic.OnWining += GameLogic_OnWining;
+            ChangePlayersColors();
+        }
+
+        private void GameLogic_OnWining(Player wonPlayer)
+        {
+            _curGameState = GameState.Ended;
+            ScreenNaviagor.CreateInstance().PushScreen(new TwoButtonsDialog(_graphicsMetaData, $"{wonPlayer.PlayerName} Won the Game", "Play Again", "Back To Main Menu",
+            onOkBtnClick: (UIElement arg1, UIEvent arg2) => {
+                ScreenNaviagor.CreateInstance().PopScreen();
+                ScreenNaviagor.CreateInstance().PopScreen();
+            },
+            onCloseBtnClick: (UIElement arg1, UIEvent arg2) => {
+                ScreenNaviagor.CreateInstance().PopScreen();
+                _gameLogic.ResetGame();
+                _curGameState = GameState.Playing;
+            }));
         }
 
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
+
+            if (_curGameState == GameState.Ended || _curGameState == GameState.Paused)
+                return;
 
             if(_isPlayingAnimation)
             {
@@ -112,8 +138,15 @@ namespace SnakeAndLadders.UI.Screens
                 }
                 else
                 {
+                    currentPlayer.MovingCellNo -= 1;
+                    currentPlayer.Position = movingVec;
+                    if (_players[0].CurrentCellNo == _players[1].CurrentCellNo)
+                    {
+                        currentPlayer.Position = new Vector2(movingVec.X + 10, movingVec.Y);
+                    }
                     _isPlayingAnimation = false;
                     _gameLogic.ChangePlayerTurn();
+                    ChangePlayersColors();
                 }
             }
         }
@@ -143,21 +176,41 @@ namespace SnakeAndLadders.UI.Screens
             }
         }
 
-        private void RollDiceButton_OnClick(UIElement arg1, UIEvent arg2)
+        private void ChangePlayersColors()
         {
-            int diceValue = _diceRollerService.RollTheDice();
-            _diceImageUI.ReloadImage(diceValue.ToString());
-
-            _gameLogic.MoveCurrentPlayingPlayer(diceValue);
             var currentPlayer = _gameLogic.GetCurrentPlayingPlayer();
             _player1Name.TextColor = currentPlayer.PlayerName == _player1Name.Text ? Color.YellowGreen : Color.Red;
             _player2Name.TextColor = currentPlayer.PlayerName == _player2Name.Text ? Color.YellowGreen : Color.Red;
-            _isPlayingAnimation = true;
+        }
+
+        private void RollDiceButton_OnClick(UIElement clickedBtn, UIEvent e)
+        {
+            if(_curGameState == GameState.Playing)
+            {
+                clickedBtn.IsEnabled = false;
+                _diceSE.Play();
+                int diceValue = _diceRollerService.RollTheDice();
+                _diceImageUI.ReloadImage(diceValue.ToString());
+
+                _gameLogic.MoveCurrentPlayingPlayer(diceValue);
+                _isPlayingAnimation = true;
+                ChangePlayersColors();
+                clickedBtn.IsEnabled = true;
+            }
         }
 
         private void PauseButton_OnClick(UIElement arg1, UIEvent arg2)
         {
-            ScreenNaviagor.CreateInstance().PopScreen();
+            _curGameState = GameState.Paused;
+            ScreenNaviagor.CreateInstance().PushScreen(new TwoButtonsDialog(_graphicsMetaData, "Pause Menu", "Exit", "Back", 
+            (UIElement arg1, UIEvent arg2) => {
+                ScreenNaviagor.CreateInstance().PopScreen();
+                _curGameState = GameState.Playing;
+            },
+            (UIElement arg1, UIEvent arg2) => {
+                ScreenNaviagor.CreateInstance().PopScreen();
+                ScreenNaviagor.CreateInstance().PopScreen();
+            }));
         }
     }
 }

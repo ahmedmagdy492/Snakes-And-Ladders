@@ -85,6 +85,12 @@
 /processorParam:TextureFormat=Color
 /build:6.png
 
+#begin bg.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:bg.mp3;bg_sound.mp3
+
 #begin bg.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -108,6 +114,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:board.png
+
+#begin death.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:death.wav
+
+#begin dice-roll.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:dice-roll.wav
 
 #begin ladder1.png
 /importer:TextureImporter
