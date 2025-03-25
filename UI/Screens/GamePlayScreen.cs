@@ -7,6 +7,7 @@ using SnakeAndLadders.UI.UIContainers;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace SnakeAndLadders.UI.Screens
 {
@@ -15,17 +16,17 @@ namespace SnakeAndLadders.UI.Screens
         private UILabel _player1Name;
         private UILabel _player2Name;
         private UIImage _diceImageUI;
-        private DiceRollerService _diceRollerService;
         private GameLogic _gameLogic;
         private readonly List<Player> _players;
         private bool _isPlayingAnimation = false;
         private readonly SoundEffect _diceSE;
         private GameState _curGameState;
+        private UIButton _rollDiceButton;
+        private UILabel _gameStatusLabel;
 
         public GamePlayScreen(GraphicsContext graphicsMetaData, List<Player> players) : base(graphicsMetaData)
         {
             _players = players;
-            _diceRollerService = new DiceRollerService();
             _diceSE = _graphicsMetaData.ContentManager.Load<SoundEffect>("dice-roll");
             Init();
         }
@@ -36,8 +37,8 @@ namespace SnakeAndLadders.UI.Screens
             UIImage player1Img = new UIImage(_graphicsMetaData, "p1");
             _player2Name = new UILabel(_graphicsMetaData, _players[1].PlayerName);
             UIImage player2Img = new UIImage(_graphicsMetaData, "p2");
-            UIButton rollDiceButton = new UIButton(_graphicsMetaData, "Roll Dice");
-            rollDiceButton.OnClick += RollDiceButton_OnClick;
+            _rollDiceButton = new UIButton(_graphicsMetaData, "Roll Dice");
+            _rollDiceButton.OnClick += RollDiceButton_OnClick;
             UICenterFlowContainer mainContainer = new UICenterFlowContainer(_graphicsMetaData);
             mainContainer.FlowDirection = UIFlowContainerDirection.RightToLeft;
             mainContainer.Position = new Vector2(20, 20);
@@ -47,6 +48,8 @@ namespace SnakeAndLadders.UI.Screens
                 width = 0,
                 color = Color.White
             };
+            _gameStatusLabel = new UILabel(_graphicsMetaData, "");
+            _gameStatusLabel.TextColor = Color.White;
 
             UIFlexDimContainer boardContainer = new UIFlexDimContainer(_graphicsMetaData);
             boardContainer.Margin = new Padding(10);
@@ -65,8 +68,8 @@ namespace SnakeAndLadders.UI.Screens
                 width = 0,
                 color = Color.White
             };
-            UICenterFlowContainer leftPanel = new UICenterFlowContainer(_graphicsMetaData);
-            leftPanel.Border = new Border
+            UICenterFlowContainer rightPanel = new UICenterFlowContainer(_graphicsMetaData);
+            rightPanel.Border = new Border
             {
                 width = 0,
                 color = Color.White
@@ -74,10 +77,11 @@ namespace SnakeAndLadders.UI.Screens
 
             buttonsPanel.Margin = new Padding(10);
 
-            buttonsPanel.Children.Add(rollDiceButton);
+            buttonsPanel.Children.Add(_rollDiceButton);
             buttonsPanel.Children.Add(_diceImageUI);
             buttonsPanel.Children.Add(pauseButton);
-            leftPanel.Children.Add(buttonsPanel);
+            rightPanel.Children.Add(buttonsPanel);
+            rightPanel.Children.Add(_gameStatusLabel);
 
             int yOffset = mainContainer.GetHeight() + mainContainer.Margin.top.ToInt() + mainContainer.Margin.bottom.ToInt() + boardContainer.Margin.top.ToInt() + boardContainer.Margin.bottom.ToInt();
 
@@ -85,7 +89,7 @@ namespace SnakeAndLadders.UI.Screens
             boardContainer.Size = boardUIImage.Size;
 
             mainContainer.Children.Add(boardContainer);
-            mainContainer.Children.Add(leftPanel);
+            mainContainer.Children.Add(rightPanel);
             mainContainer.Children.Add(player1Img);
             mainContainer.Children.Add(_player1Name);
             mainContainer.Children.Add(player2Img);
@@ -93,10 +97,11 @@ namespace SnakeAndLadders.UI.Screens
 
             _uiContainers.Push(mainContainer);
 
-            _gameLogic = new GameLogic(_players);
+            _gameLogic = new GameLogic(_players, GamePlayMode.AganistComputer);
             _curGameState = GameState.Playing;
             _gameLogic.OnWining += GameLogic_OnWining;
             ChangePlayersColors();
+            _gameStatusLabel.Text = _gameLogic.GetCurrentPlayingPlayer().PlayerName + " is Playing ...";
         }
 
         private void GameLogic_OnWining(Player wonPlayer)
@@ -147,6 +152,21 @@ namespace SnakeAndLadders.UI.Screens
                     _isPlayingAnimation = false;
                     _gameLogic.ChangePlayerTurn();
                     ChangePlayersColors();
+                    if(_gameLogic.GetCurrentPlayingPlayer().PlayerName == "Computer")
+                    {
+                        _rollDiceButton.IsEnabled = false;
+                        Task.Run(async () =>
+                        {
+                            _gameStatusLabel.Text = "Computer is Playing ...";
+                            await Task.Delay(3000);
+                            RollDiceButton_OnClick(_rollDiceButton, null);
+                            _rollDiceButton.IsEnabled = true;
+                        });
+                    }
+                    else
+                    {
+                        _gameStatusLabel.Text = _gameLogic.GetCurrentPlayingPlayer().PlayerName + " is Playing ...";
+                    }
                 }
             }
         }
@@ -189,7 +209,7 @@ namespace SnakeAndLadders.UI.Screens
             {
                 clickedBtn.IsEnabled = false;
                 _diceSE.Play();
-                int diceValue = _diceRollerService.RollTheDice();
+                int diceValue = _gameLogic.PlayDice();
                 _diceImageUI.ReloadImage(diceValue.ToString());
 
                 _gameLogic.MoveCurrentPlayingPlayer(diceValue);

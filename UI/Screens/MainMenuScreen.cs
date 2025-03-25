@@ -32,18 +32,12 @@ namespace SnakeAndLadders.UI.Screens
             UILabel gamename = new UILabel(_graphicsMetaData, "");
             UIButton vsComputerBtn = new UIButton(_graphicsMetaData, "VS Computer");
             vsComputerBtn.OnClick += PlayVersusComp_OnClick;
-            vsComputerBtn.TextColor = Color.YellowGreen;
-            vsComputerBtn.Background = Color.Black;
 
             UIButton playWithFriendBtn = new UIButton(_graphicsMetaData, "Play With Friend");
             playWithFriendBtn.OnClick += PlayWithFriendBtn_OnClick;
-            playWithFriendBtn.TextColor = Color.YellowGreen;
-            playWithFriendBtn.Background = Color.Black;
 
             UIButton createServerBtn = new UIButton(_graphicsMetaData, "Create a Server");
             createServerBtn.OnClick += CreateServerBtn_OnClick;
-            createServerBtn.TextColor = Color.YellowGreen;
-            createServerBtn.Background = Color.Black;
 
             UICenterFlowContainer mainContainer = new UICenterFlowContainer(_graphicsMetaData);
             mainContainer.Border = new Border { width = 0, color = Color.White };

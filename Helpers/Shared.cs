@@ -7,9 +7,8 @@ using System.Threading.Tasks;
 
 namespace SnakeAndLadders.Helpers
 {
-    public static class Constants
+    public static class Shared
     {
-        public const int SCREEN_WIDTH = 1280;
-        public const int SCREEN_HEIGHT = 720;
+        public static Color CLEAR_COLOR = new Color(0);
     }
 }

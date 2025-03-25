@@ -45,7 +45,7 @@ public class MainGame : Game
             ContentManager = Content,
             ScreenWidth = _graphics.PreferredBackBufferWidth,
             ScreenHeight = _graphics.PreferredBackBufferHeight,
-            ClearColor = Constants.CLEAR_COLOR
+            ClearColor = Shared.CLEAR_COLOR
         };
         TargetElapsedTime = TimeSpan.FromSeconds(1d / 30d);
         _screenNavigator.PushScreen(new MainMenuScreen(_graphicsContext));
@@ -63,7 +63,7 @@ public class MainGame : Game
 
     protected override void Draw(GameTime gameTime)
     {
-        GraphicsDevice.Clear(Constants.CLEAR_COLOR);
+        GraphicsDevice.Clear(Shared.CLEAR_COLOR);
 
         _spriteBatch.Begin();
 

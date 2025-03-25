@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using SnakeAndLadders.Services;
 using System;
 using System.Collections.Generic;
 
@@ -10,6 +11,12 @@ namespace SnakeAndLadders.Models
         Paused,
         Ended
     }
+    
+    public enum GamePlayMode
+    {
+        AganistComputer,
+        AganistPlayer
+    }
 
     public class GameLogic
     {
@@ -18,6 +25,8 @@ namespace SnakeAndLadders.Models
         private readonly List<Player> _players;
         private int _currentPlayerNo = 0;
         private Player _currentPlayingPlayer;
+        private readonly GamePlayMode _gamePlayMode;
+        private readonly DiceRollerService _diceRollerService;
 
         public event Action<Player> OnWining;
 
@@ -58,11 +67,12 @@ namespace SnakeAndLadders.Models
             return newPlayerCellNo;
         }
 
-        public GameLogic(List<Player> players)
+        public GameLogic(List<Player> players, GamePlayMode gamePlayMode)
         {
             if (players == null || players.Count == 0)
                 throw new ArgumentException("Invalid players argument");
 
+            _diceRollerService = new DiceRollerService();
             maps = new List<SnakesLaddersMap>();
             _currentMap = new SnakesLaddersMap
             {
@@ -249,8 +259,14 @@ namespace SnakeAndLadders.Models
 
             maps.Add(_currentMap);
             _players = players;
+            _gamePlayMode = gamePlayMode;
             _currentPlayingPlayer = DeterminePlayerTurn();
             ResetPlayersPositions();
+        }
+
+        public int PlayDice()
+        {
+            return _diceRollerService.RollTheDice();
         }
 
         public void ResetGame()
