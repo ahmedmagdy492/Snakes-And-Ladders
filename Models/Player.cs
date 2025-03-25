@@ -12,7 +12,8 @@ namespace SnakeAndLadders.Models
     {
         public string PlayerName { get; set; }
         public Texture2D Texture { get; set; }
-        public int CurrentCellNo { get; set; } = 0;
+        public int CurrentCellNo { get; set; } = 1;
+        public int MovingCellNo { get; set; } = 1;
         public Vector2 Position { get; set; }
     }
 }

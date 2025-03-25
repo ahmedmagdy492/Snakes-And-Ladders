@@ -7,12 +7,10 @@ namespace SnakeAndLadders.Models
     public class GameLogic
     {
         private readonly List<SnakesLaddersMap> maps;
-        private SnakesLaddersMap _currentMap;
+        public readonly SnakesLaddersMap _currentMap;
         private readonly List<Player> _players;
         private int _currentPlayerNo = 0;
         private Player _currentPlayingPlayer;
-        private int _cellWidth = 60, _cellHeight = 60;
-        private int _cellsCountPerRow = 20;
 
         public event Action<Player> OnWining;
 
@@ -64,7 +62,6 @@ namespace SnakeAndLadders.Models
                 throw new ArgumentException("Invalid players argument");
 
             maps = new List<SnakesLaddersMap>();
-            // TODO: choose a map randomly
             _currentMap = new SnakesLaddersMap
             {
                 StartCell = 1,
@@ -146,106 +143,106 @@ namespace SnakeAndLadders.Models
             #endregion
             _currentMap._cellPositions = new Dictionary<int, Vector2>()
             {
-                [1] = new Vector2(350, 570),
-                [2] = new Vector2(410, 570),
-                [3] = new Vector2(460, 570),
-                [4] = new Vector2(510, 570),
-                [5] = new Vector2(560, 570),
-                [6] = new Vector2(610, 570),
-                [7] = new Vector2(660, 570),
-                [8] = new Vector2(710, 570),
-                [9] = new Vector2(760, 570),
-                [10] = new Vector2(810, 570),
-                [11] = new Vector2(810, 510),
-                [12] = new Vector2(760, 510),
-                [13] = new Vector2(710, 510),
-                [14] = new Vector2(660, 510),
-                [15] = new Vector2(610, 510),
-                [16] = new Vector2(560, 510),
-                [17] = new Vector2(510, 510),
-                [18] = new Vector2(460, 510),
-                [19] = new Vector2(410, 510),
-                [20] = new Vector2(350, 510),
-                [21] = new Vector2(350, 450),
-                [22] = new Vector2(410, 450),
-                [23] = new Vector2(460, 450),
-                [24] = new Vector2(510, 450),
-                [25] = new Vector2(560, 450),
-                [26] = new Vector2(610, 450),
-                [27] = new Vector2(660, 450),
-                [28] = new Vector2(710, 450),
-                [29] = new Vector2(760, 450),
-                [30] = new Vector2(810, 450),
-                [31] = new Vector2(810, 390),
-                [32] = new Vector2(760, 390),
-                [33] = new Vector2(710, 390),
-                [34] = new Vector2(660, 390),
-                [35] = new Vector2(610, 390),
-                [36] = new Vector2(560, 390),
-                [37] = new Vector2(510, 390),
-                [38] = new Vector2(460, 390),
-                [39] = new Vector2(410, 390),
-                [40] = new Vector2(350, 390),
-                [41] = new Vector2(350, 330),
-                [42] = new Vector2(410, 330),
-                [43] = new Vector2(460, 330),
-                [44] = new Vector2(510, 330),
-                [45] = new Vector2(560, 330),
-                [46] = new Vector2(610, 330),
-                [47] = new Vector2(660, 330),
-                [48] = new Vector2(710, 330),
-                [49] = new Vector2(760, 330),
-                [50] = new Vector2(810, 330),
-                [51] = new Vector2(810, 270),
-                [52] = new Vector2(760, 270),
-                [53] = new Vector2(710, 270),
-                [54] = new Vector2(660, 270),
-                [55] = new Vector2(610, 270),
-                [56] = new Vector2(560, 270),
-                [57] = new Vector2(510, 270),
-                [58] = new Vector2(460, 270),
-                [59] = new Vector2(410, 270),
-                [60] = new Vector2(350, 270),
-                [61] = new Vector2(350, 210),
-                [62] = new Vector2(410, 210),
-                [63] = new Vector2(460, 210),
-                [64] = new Vector2(510, 210),
-                [65] = new Vector2(560, 210),
-                [66] = new Vector2(610, 210),
-                [67] = new Vector2(660, 210),
-                [68] = new Vector2(710, 210),
-                [69] = new Vector2(760, 210),
-                [70] = new Vector2(810, 210),
-                [71] = new Vector2(810, 150),
-                [72] = new Vector2(760, 150),
-                [73] = new Vector2(710, 150),
-                [74] = new Vector2(660, 150),
-                [75] = new Vector2(610, 150),
-                [76] = new Vector2(560, 150),
-                [77] = new Vector2(510, 150),
-                [78] = new Vector2(460, 150),
-                [79] = new Vector2(410, 150),
-                [80] = new Vector2(350, 150),
-                [81] = new Vector2(350, 90),
-                [82] = new Vector2(410, 90),
-                [83] = new Vector2(460, 90),
-                [84] = new Vector2(510, 90),
-                [85] = new Vector2(560, 90),
-                [86] = new Vector2(610, 90),
-                [87] = new Vector2(660, 90),
-                [88] = new Vector2(710, 90),
-                [89] = new Vector2(760, 90),
-                [90] = new Vector2(810, 90),
-                [91] = new Vector2(810, 30),
-                [92] = new Vector2(760, 30),
-                [93] = new Vector2(710, 30),
-                [94] = new Vector2(660, 30),
-                [95] = new Vector2(610, 30),
-                [96] = new Vector2(560, 30),
-                [97] = new Vector2(510, 30),
-                [98] = new Vector2(460, 30),
-                [99] = new Vector2(410, 30),
-                [100] = new Vector2(350, 30),
+                [1] = new Vector2(30, 570),
+                [2] = new Vector2(90, 570),
+                [3] = new Vector2(150, 570),
+                [4] = new Vector2(210, 570),
+                [5] = new Vector2(270, 570),
+                [6] = new Vector2(330, 570),
+                [7] = new Vector2(390, 570),
+                [8] = new Vector2(450, 570),
+                [9] = new Vector2(510, 570),
+                [10] = new Vector2(570, 570),
+                [11] = new Vector2(570, 510),
+                [12] = new Vector2(510, 510),
+                [13] = new Vector2(450, 510),
+                [14] = new Vector2(390, 510),
+                [15] = new Vector2(330, 510),
+                [16] = new Vector2(270, 510),
+                [17] = new Vector2(210, 510),
+                [18] = new Vector2(150, 510),
+                [19] = new Vector2(90, 510),
+                [20] = new Vector2(30, 510),
+                [21] = new Vector2(30, 450),
+                [22] = new Vector2(90, 450),
+                [23] = new Vector2(150, 450),
+                [24] = new Vector2(210, 450),
+                [25] = new Vector2(270, 450),
+                [26] = new Vector2(330, 450),
+                [27] = new Vector2(390, 450),
+                [28] = new Vector2(450, 450),
+                [29] = new Vector2(510, 450),
+                [30] = new Vector2(570, 450),
+                [31] = new Vector2(570, 390),
+                [32] = new Vector2(510, 390),
+                [33] = new Vector2(450, 390),
+                [34] = new Vector2(390, 390),
+                [35] = new Vector2(330, 390),
+                [36] = new Vector2(270, 390),
+                [37] = new Vector2(210, 390),
+                [38] = new Vector2(150, 390),
+                [39] = new Vector2(90, 390),
+                [40] = new Vector2(30, 390),
+                [41] = new Vector2(30, 330),
+                [42] = new Vector2(90, 330),
+                [43] = new Vector2(150, 330),
+                [44] = new Vector2(210, 330),
+                [45] = new Vector2(270, 330),
+                [46] = new Vector2(330, 330),
+                [47] = new Vector2(390, 330),
+                [48] = new Vector2(450, 330),
+                [49] = new Vector2(510, 330),
+                [50] = new Vector2(570, 330),
+                [51] = new Vector2(570, 270),
+                [52] = new Vector2(510, 270),
+                [53] = new Vector2(450, 270),
+                [54] = new Vector2(390, 270),
+                [55] = new Vector2(330, 270),
+                [56] = new Vector2(270, 270),
+                [57] = new Vector2(210, 270),
+                [58] = new Vector2(150, 270),
+                [59] = new Vector2(90, 270),
+                [60] = new Vector2(30, 270),
+                [61] = new Vector2(30, 210),
+                [62] = new Vector2(90, 210),
+                [63] = new Vector2(150, 210),
+                [64] = new Vector2(210, 210),
+                [65] = new Vector2(270, 210),
+                [66] = new Vector2(330, 210),
+                [67] = new Vector2(390, 210),
+                [68] = new Vector2(450, 210),
+                [69] = new Vector2(510, 210),
+                [70] = new Vector2(570, 210),
+                [71] = new Vector2(570, 150),
+                [72] = new Vector2(510, 150),
+                [73] = new Vector2(450, 150),
+                [74] = new Vector2(390, 150),
+                [75] = new Vector2(330, 150),
+                [76] = new Vector2(270, 150),
+                [77] = new Vector2(210, 150),
+                [78] = new Vector2(150, 150),
+                [79] = new Vector2(90, 150),
+                [80] = new Vector2(30, 150),
+                [81] = new Vector2(30, 90),
+                [82] = new Vector2(90, 90),
+                [83] = new Vector2(150, 90),
+                [84] = new Vector2(210, 90),
+                [85] = new Vector2(270, 90),
+                [86] = new Vector2(330, 90),
+                [87] = new Vector2(390, 90),
+                [88] = new Vector2(450, 90),
+                [89] = new Vector2(510, 90),
+                [90] = new Vector2(570, 90),
+                [91] = new Vector2(570, 30),
+                [92] = new Vector2(510, 30),
+                [93] = new Vector2(450, 30),
+                [94] = new Vector2(390, 30),
+                [95] = new Vector2(330, 30),
+                [96] = new Vector2(270, 30),
+                [97] = new Vector2(210, 30),
+                [98] = new Vector2(150, 30),
+                [99] = new Vector2(90, 30),
+                [100] = new Vector2(30, 30),
             };
 
             maps.Add(_currentMap);
@@ -254,9 +251,14 @@ namespace SnakeAndLadders.Models
             ResetPlayersPositions();
         }
 
-        public string GetCurrentPlayingPlayer()
+        public string GetCurrentPlayingPlayerName()
         {
             return _currentPlayingPlayer.PlayerName;
+        }
+
+        public Player GetCurrentPlayingPlayer()
+        {
+            return _currentPlayingPlayer;
         }
 
         public List<Player> GetPlayers()
@@ -268,10 +270,13 @@ namespace SnakeAndLadders.Models
         {
             int newPlayerCellNo = _currentPlayingPlayer.CurrentCellNo + diceValue;
             int oldPlayerCellNo = _currentPlayingPlayer.CurrentCellNo;
+            _currentPlayingPlayer.MovingCellNo = _currentPlayingPlayer.CurrentCellNo;
             _currentPlayingPlayer.CurrentCellNo = DetermineNextPlayerCell(newPlayerCellNo);
-
             _currentPlayingPlayer.Position = _currentMap._cellPositions[_currentPlayingPlayer.CurrentCellNo];
+        }
 
+        public void ChangePlayerTurn()
+        {
             _currentPlayerNo++;
             if (_currentPlayerNo >= _players.Count)
             {

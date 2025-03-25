@@ -17,6 +17,7 @@ namespace SnakeAndLadders.UI.Screens
             connectDialogBox.Background = Color.Wheat;
             connectDialogBox.Margin = new Padding(20);
             UILabel uILabel = new UILabel(_graphicsMetaData, "Enter Friend IP");
+            uILabel.TextColor = Color.White;
             UITextInput ipAddress = new UITextInput(_graphicsMetaData);
 
             UIButton connectButton = new UIButton(_graphicsMetaData, "Connect");

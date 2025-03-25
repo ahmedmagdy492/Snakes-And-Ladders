@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Input;
 using SnakeAndLadders.Helpers;
 using SnakeAndLadders.UI;
 using SnakeAndLadders.UI.Screens;
+using System;
 
 namespace SnakeAndLadders;
 
@@ -35,7 +36,7 @@ public class MainGame : Game
     protected override void LoadContent()
     {
         _spriteBatch = new SpriteBatch(GraphicsDevice);
-        _font = Content.Load<SpriteFont>("MainFont");
+        _font = Content.Load<SpriteFont>("SecondFont");
         _graphicsContext = new GraphicsContext
         {
             Font = _font,
@@ -46,6 +47,7 @@ public class MainGame : Game
             ScreenHeight = _graphics.PreferredBackBufferHeight,
             ClearColor = Constants.CLEAR_COLOR
         };
+        TargetElapsedTime = TimeSpan.FromSeconds(1d / 30d);
         _screenNavigator.PushScreen(new MainMenuScreen(_graphicsContext));
     }
 

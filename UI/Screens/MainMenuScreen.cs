@@ -13,14 +13,17 @@ namespace SnakeAndLadders.UI.Screens
 {
     public class MainMenuScreen : Screen
     {
+        private Texture2D _bgTexture;
         public MainMenuScreen(GraphicsContext graphicsMetaData) : base(graphicsMetaData)
         {
             Init();
+            _bgTexture = _graphicsMetaData.ContentManager.Load<Texture2D>("bg");
         }
 
         private void Init()
         {
-            UILabel label = new UILabel(_graphicsMetaData, "Snakes And Ladders");
+            //UILabel gameName = new UILabel(_graphicsMetaData, "Snakes And Ladders");
+            //gameName.TextColor = Color.White;
             UIButton vsComputerBtn = new UIButton(_graphicsMetaData, "VS Computer");
             vsComputerBtn.OnClick += PlayVersusComp_OnClick;
 
@@ -33,12 +36,17 @@ namespace SnakeAndLadders.UI.Screens
             UICenterFlowContainer mainContainer = new UICenterFlowContainer(_graphicsMetaData);
             mainContainer.Border = new Border { width = 0, color = Color.White };
             mainContainer.Margin = new Padding(top: 20, right: 0, left: 0, bottom: 0);
-            mainContainer.Children.Add(label);
             mainContainer.Children.Add(vsComputerBtn);
             mainContainer.Children.Add(playWithFriendBtn);
             mainContainer.Children.Add(createServerBtn);
             mainContainer.Position = new Vector2((_graphicsMetaData.ScreenWidth - mainContainer.GetWidth()) / 2, 200);
             _uiContainers.Push(mainContainer);
+        }
+
+        public override void Draw()
+        {
+            _graphicsMetaData.SpriteBatch.Draw(_bgTexture, new Rectangle(0, 0, _bgTexture.Width, _bgTexture.Height), Color.White);
+            base.Draw();
         }
 
         private void CreateServerBtn_OnClick(UIElement arg1, UIEvent arg2)
@@ -57,14 +65,14 @@ namespace SnakeAndLadders.UI.Screens
             {
                 new Models.Player
                 {
-                    CurrentCellNo = 0,
+                    CurrentCellNo = 1,
                     PlayerName = "Player 1",
                     Texture = _graphicsMetaData.ContentManager.Load<Texture2D>("p1"),
                     Position = Vector2.Zero
                 },
                 new Models.Player
                 {
-                    CurrentCellNo = 0,
+                    CurrentCellNo = 1,
                     PlayerName = "Computer",
                     Texture = _graphicsMetaData.ContentManager.Load<Texture2D>("p2"),
                     Position = Vector2.Zero

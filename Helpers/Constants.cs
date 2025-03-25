@@ -11,6 +11,6 @@ namespace SnakeAndLadders.Helpers
     {
         public const int SCREEN_WIDTH = 1280;
         public const int SCREEN_HEIGHT = 720;
-        public static readonly Color CLEAR_COLOR = Color.CornflowerBlue;
+        public static readonly Color CLEAR_COLOR = new Color(0);
     }
 }
