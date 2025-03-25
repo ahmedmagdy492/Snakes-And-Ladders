@@ -38,8 +38,16 @@ namespace SnakeAndLadders.UI
 
         public override void Draw()
         {
-            _graphicsMetaData.SpriteBatch.Draw(_texture, new Rectangle(Position.ToPoint(), Size.ToPoint()), Background);
-            _graphicsMetaData.SpriteBatch.DrawString(Font, Text, new Vector2(Padding.left + Position.X, Padding.top + Position.Y), TextColor);
+            if(!_isClickEventOn)
+            {
+                _graphicsMetaData.SpriteBatch.Draw(_texture, new Rectangle(Position.ToPoint(), Size.ToPoint()), Background);
+                _graphicsMetaData.SpriteBatch.DrawString(Font, Text, new Vector2(Padding.left + Position.X, Padding.top + Position.Y), TextColor);
+            }
+            else
+            {
+                _graphicsMetaData.SpriteBatch.Draw(_texture, new Rectangle(Position.ToPoint(), Size.ToPoint()), TextColor);
+                _graphicsMetaData.SpriteBatch.DrawString(Font, Text, new Vector2(Padding.left + Position.X, Padding.top + Position.Y), Background);
+            }
         }
 
         public override void HandleEvent(UIEvent e)

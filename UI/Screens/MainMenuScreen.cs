@@ -53,7 +53,23 @@ namespace SnakeAndLadders.UI.Screens
 
         private void PlayVersusComp_OnClick(UIElement arg1, UIEvent arg2)
         {
-            ScreenNaviagor.CreateInstance().PushScreen(new GamePlayScreen(_graphicsMetaData));
+            ScreenNaviagor.CreateInstance().PushScreen(new GamePlayScreen(_graphicsMetaData, new List<Models.Player>
+            {
+                new Models.Player
+                {
+                    CurrentCellNo = 0,
+                    PlayerName = "Player 1",
+                    Texture = _graphicsMetaData.ContentManager.Load<Texture2D>("p1"),
+                    Position = Vector2.Zero
+                },
+                new Models.Player
+                {
+                    CurrentCellNo = 0,
+                    PlayerName = "Computer",
+                    Texture = _graphicsMetaData.ContentManager.Load<Texture2D>("p2"),
+                    Position = Vector2.Zero
+                }
+            }));
         }
     }
 }
