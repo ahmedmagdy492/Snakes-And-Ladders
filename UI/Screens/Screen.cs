@@ -14,11 +14,15 @@ namespace SnakeAndLadders.UI.Screens
         protected readonly GraphicsContext _graphicsMetaData;
         protected readonly UIEventManager _uIEventManager;
         protected readonly Stack<UIContainer> _uiContainers;
+
+        public bool IsDialog { get; set; }
+
         public Screen(GraphicsContext graphicsMetaData)
         {
             _graphicsMetaData = graphicsMetaData;
             _uIEventManager = new UIEventManager();
             _uiContainers = new Stack<UIContainer>();
+            IsDialog = false;
         }
 
         /// <summary>

@@ -37,12 +37,20 @@ namespace SnakeAndLadders.UI.UIContainers
                 width =  2,
                 color = Color.Black
             };
-            Background = _graphicsMetaData.ClearColor;
+            Background = new Color(0x00, 0x00, 0x00, 0x00);
 
             _borderTexture = new Texture2D(graphicsMetaData.GraphicsDeviceManager.GraphicsDevice, 1, 1);
             _borderTexture.SetData([Border.color]);
             _backgroundTexture = new Texture2D(graphicsMetaData.GraphicsDeviceManager.GraphicsDevice, 1, 1);
             _backgroundTexture.SetData([Background]);
+        }
+
+        public void ChangeBackground(Color newColor)
+        {
+            if(_backgroundTexture != null)
+            {
+                _backgroundTexture.SetData([newColor]);
+            }
         }
 
         public override void Draw()

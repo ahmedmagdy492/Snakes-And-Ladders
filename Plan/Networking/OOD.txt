@@ -1,0 +1,8 @@
+
+Network Manager:
+-void connect(ip, port) -> callback based
+-void setupServer() -> callback based
+-send(data) -> callback based
+-startReceiving():
+ -will set a background task that will keep checking if there are any data available to reterive
+ if there are then a callback will be called

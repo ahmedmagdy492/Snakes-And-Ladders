@@ -54,7 +54,15 @@ namespace SnakeAndLadders.UI.Screens
 
         public void Draw()
         {
-            _screens.Peek().Draw();
+            var topScreen = _screens.Peek();
+            if(topScreen.IsDialog)
+            {
+                topScreen = _screens.Pop();
+                _screens.Peek().Draw();
+                _screens.Push(topScreen);
+            }
+
+            topScreen.Draw();
         }
     }
 }

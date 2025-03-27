@@ -14,8 +14,8 @@ namespace SnakeAndLadders.UI.Screens
         private void Init()
         {
             UICenterFlowContainer connectDialogBox = new UICenterFlowContainer(_graphicsMetaData);
+            connectDialogBox.ChangeBackground(new Color(0x00, 0x00, 0x00, 0xdd));
 
-            connectDialogBox.Background = Color.Wheat;
             connectDialogBox.Margin = new Padding(20);
             UILabel uILabel = new UILabel(_graphicsMetaData, "Enter Friend IP");
             uILabel.TextColor = Color.White;
@@ -31,6 +31,7 @@ namespace SnakeAndLadders.UI.Screens
             connectDialogBox.Children.Add(closeButton);
             connectDialogBox.Position = new Vector2((_graphicsMetaData.ScreenWidth - connectDialogBox.GetWidth()) / 2, 200);
             _uiContainers.Push(connectDialogBox);
+            IsDialog = true;
         }
 
         public ConnectToServerDialogBox(GraphicsContext graphicsMetaData) : base(graphicsMetaData)

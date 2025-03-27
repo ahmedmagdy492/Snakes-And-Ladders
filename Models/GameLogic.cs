@@ -272,6 +272,11 @@ namespace SnakeAndLadders.Models
         public void ResetGame()
         {
             ResetPlayersPositions();
+            foreach(var player in _players)
+            {
+                player.CurrentCellNo = 1;
+                player.Position = _currentMap._cellPositions[player.CurrentCellNo];
+            }
             _currentPlayingPlayer = DeterminePlayerTurn();
         }
 

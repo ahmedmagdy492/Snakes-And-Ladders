@@ -19,7 +19,7 @@ namespace SnakeAndLadders.UI.Screens
         {
             UICenterFlowContainer connectDialogBox = new UICenterFlowContainer(_graphicsMetaData);
 
-            connectDialogBox.Background = Color.Wheat;
+            connectDialogBox.ChangeBackground(new Color(0x00, 0x00, 0x00, 0xaa));
             connectDialogBox.Margin = new Padding(20);
             UILabel uILabel = new UILabel(_graphicsMetaData, _textMsg);
             uILabel.TextColor = Color.White;
@@ -34,6 +34,7 @@ namespace SnakeAndLadders.UI.Screens
             connectDialogBox.Children.Add(closeButton);
             connectDialogBox.Position = new Vector2((_graphicsMetaData.ScreenWidth - connectDialogBox.GetWidth()) / 2, 200);
             _uiContainers.Push(connectDialogBox);
+            IsDialog = true;
         }
 
         public TwoButtonsDialog(GraphicsContext graphicsMetaData, string textMsg, string closeBtnText = "Cancel", string okBtnText = "OK", Action<UIElement, UIEvent> onOkBtnClick = null, Action<UIElement, UIEvent> onCloseBtnClick = null) : base(graphicsMetaData)

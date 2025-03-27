@@ -9,6 +9,6 @@ namespace SnakeAndLadders.Helpers
 {
     public static class Shared
     {
-        public static Color CLEAR_COLOR = new Color(0);
+        public static Color CLEAR_COLOR = new Color(0x18, 0x4D, 0x47);
     }
 }

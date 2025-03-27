@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
+using Microsoft.Xna.Framework.Media;
 using SnakeAndLadders.Helpers;
 using SnakeAndLadders.Models;
 using SnakeAndLadders.Services;
@@ -20,6 +21,7 @@ namespace SnakeAndLadders.UI.Screens
         private readonly List<Player> _players;
         private bool _isPlayingAnimation = false;
         private readonly SoundEffect _diceSE;
+        private readonly Song _winSong;
         private GameState _curGameState;
         private UIButton _rollDiceButton;
         private UILabel _gameStatusLabel;
@@ -28,6 +30,7 @@ namespace SnakeAndLadders.UI.Screens
         {
             _players = players;
             _diceSE = _graphicsMetaData.ContentManager.Load<SoundEffect>("dice-roll");
+            _winSong = _graphicsMetaData.ContentManager.Load<Song>("win");
             Init();
         }
 
@@ -123,6 +126,8 @@ namespace SnakeAndLadders.UI.Screens
 
         private void GameLogic_OnWining(Player wonPlayer)
         {
+            var prevSong = MediaPlayer.Queue.ActiveSong;
+            MediaPlayer.Play(_winSong);
             _curGameState = GameState.Ended;
             ScreenNaviagor.CreateInstance().PushScreen(new TwoButtonsDialog(_graphicsMetaData, $"{wonPlayer.PlayerName} Won the Game", "Play Again", "Back To Main Menu",
             onOkBtnClick: (UIElement arg1, UIEvent arg2) => {
@@ -134,6 +139,7 @@ namespace SnakeAndLadders.UI.Screens
                 _gameLogic.ResetGame();
                 _curGameState = GameState.Playing;
             }));
+            MediaPlayer.Play(prevSong);
         }
 
         public override void Update(GameTime gameTime)
@@ -229,18 +235,21 @@ namespace SnakeAndLadders.UI.Screens
             }
         }
 
-        private void PauseButton_OnClick(UIElement arg1, UIEvent arg2)
+        private void PauseButton_OnClick(UIElement clickedBtn, UIEvent e)
         {
             _curGameState = GameState.Paused;
-            ScreenNaviagor.CreateInstance().PushScreen(new TwoButtonsDialog(_graphicsMetaData, "Pause Menu", "Exit", "Back", 
-            (UIElement arg1, UIEvent arg2) => {
+            var pauseDialog = new TwoButtonsDialog(_graphicsMetaData, "Pause Menu", "Exit", "Back",
+            (UIElement arg1, UIEvent arg2) =>
+            {
                 ScreenNaviagor.CreateInstance().PopScreen();
                 _curGameState = GameState.Playing;
             },
-            (UIElement arg1, UIEvent arg2) => {
+            (UIElement arg1, UIEvent arg2) =>
+            {
                 ScreenNaviagor.CreateInstance().PopScreen();
                 ScreenNaviagor.CreateInstance().PopScreen();
-            }));
+            });
+            ScreenNaviagor.CreateInstance().PushScreen(pauseDialog);
         }
     }
 }

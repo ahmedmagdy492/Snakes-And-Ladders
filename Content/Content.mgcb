@@ -170,3 +170,9 @@
 /processorParam:TextureFormat=Compressed
 /build:SecondFont.spritefont
 
+#begin win.ogg
+/importer:OggImporter
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:win.ogg
+
