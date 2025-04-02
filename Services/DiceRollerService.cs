@@ -14,6 +14,7 @@ namespace SnakeAndLadders.Services
         {
             Random random = new Random();
             _currentValue = random.Next(1, 7);
+            GC.Collect();
             return _currentValue;
         }
     }

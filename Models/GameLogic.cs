@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace SnakeAndLadders.Models
 {
-    public enum GameState 
+    public enum GameState
     {
         Playing,
         Paused,
@@ -302,18 +302,16 @@ namespace SnakeAndLadders.Models
                     OnWining(_currentPlayingPlayer);
                 }
             }
+
+            _currentPlayingPlayer.Position = _currentMap._cellPositions[_currentPlayingPlayer.CurrentCellNo];
+            var otherPlayer = _currentPlayingPlayer == _players[0] ? _players[1] : _players[0];
+            if (_currentPlayingPlayer.CurrentCellNo == otherPlayer.CurrentCellNo)
+            {
+                _currentPlayingPlayer.Position = new Vector2(_currentPlayingPlayer.Position.X + 10, _currentPlayingPlayer.Position.Y);
+            }
             else
             {
-                _currentPlayingPlayer.Position = _currentMap._cellPositions[_currentPlayingPlayer.CurrentCellNo];
-                var otherPlayer = _currentPlayingPlayer == _players[0] ? _players[1] : _players[0];
-                if (_currentPlayingPlayer.CurrentCellNo == otherPlayer.CurrentCellNo)
-                {
-                    _currentPlayingPlayer.Position = new Vector2(_currentPlayingPlayer.Position.X + 10, _currentPlayingPlayer.Position.Y);
-                }
-                else
-                {
-                    _currentPlayingPlayer.Position = new Vector2(_currentPlayingPlayer.Position.X, _currentPlayingPlayer.Position.Y);
-                }
+                _currentPlayingPlayer.Position = new Vector2(_currentPlayingPlayer.Position.X, _currentPlayingPlayer.Position.Y);
             }
         }
 
