@@ -6,13 +6,11 @@ using SnakeAndLadders.Models;
 using SnakeAndLadders.Services;
 using SnakeAndLadders.UI.UIContainers;
 using System.Collections.Generic;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace SnakeAndLadders.UI.Screens
 {
-    public class GamePlayScreen : Screen
+    public class ServerNetworkGamePlayScreen : Screen
     {
         private UILabel _player1Name;
         private UILabel _player2Name;
@@ -25,9 +23,11 @@ namespace SnakeAndLadders.UI.Screens
         private GameState _curGameState;
         private UIButton _rollDiceButton;
         private UILabel _gameStatusLabel;
+        private readonly NetworkServer _networkServer;
 
-        public GamePlayScreen(GraphicsContext graphicsMetaData, List<Player> players) : base(graphicsMetaData)
+        public ServerNetworkGamePlayScreen(NetworkServer networkServer, GraphicsContext graphicsMetaData, List<Player> players) : base(graphicsMetaData)
         {
+            _networkServer = networkServer;
             _players = players;
             _diceSE = _graphicsMetaData.ContentManager.Load<SoundEffect>("dice-roll");
             _winSong = _graphicsMetaData.ContentManager.Load<Song>("win");

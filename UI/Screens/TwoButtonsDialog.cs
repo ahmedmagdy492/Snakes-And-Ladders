@@ -15,36 +15,55 @@ namespace SnakeAndLadders.UI.Screens
         private string _okBtnText;
         private Action<UIElement, UIEvent> onCloseBtnClicked;
         private Action<UIElement, UIEvent> onOkBtnClicked;
-        private void Init()
-        {
-            UICenterFlowContainer connectDialogBox = new UICenterFlowContainer(_graphicsMetaData);
+        private UICenterFlowContainer _connectDialogBox;
 
-            connectDialogBox.ChangeBackground(new Color(0x00, 0x00, 0x00, 0xaa));
-            connectDialogBox.Margin = new Padding(20);
+        public override Color Background { 
+            get
+            {
+                return _connectDialogBox.Background;
+            }
+            set {
+                _connectDialogBox.ChangeBackground(value);
+            } 
+        }
+
+        private void Init(bool hideCloseBtn)
+        {
+            _connectDialogBox = new UICenterFlowContainer(_graphicsMetaData);
+
+            _connectDialogBox.Margin = new Padding(20);
             UILabel uILabel = new UILabel(_graphicsMetaData, _textMsg);
             uILabel.TextColor = Color.White;
 
             UIButton connectButton = new UIButton(_graphicsMetaData, _okBtnText);
             connectButton.OnClick += onOkBtnClicked;
-            UIButton closeButton = new UIButton(_graphicsMetaData, _closeBtnText);
-            closeButton.OnClick += onCloseBtnClicked;
 
-            connectDialogBox.Children.Add(uILabel);
-            connectDialogBox.Children.Add(connectButton);
-            connectDialogBox.Children.Add(closeButton);
-            connectDialogBox.Position = new Vector2((_graphicsMetaData.ScreenWidth - connectDialogBox.GetWidth()) / 2, 200);
-            _uiContainers.Push(connectDialogBox);
+            _connectDialogBox.Children.Add(uILabel);
+            _connectDialogBox.Children.Add(connectButton);
+            if (!hideCloseBtn)
+            {
+                UIButton closeButton = new UIButton(_graphicsMetaData, _closeBtnText);
+                closeButton.OnClick += onCloseBtnClicked;
+                _connectDialogBox.Children.Add(closeButton);
+            }
+            
+            _connectDialogBox.Position = new Vector2((_graphicsMetaData.ScreenWidth - _connectDialogBox.GetWidth()) / 2, 200);
+            _uiContainers.Push(_connectDialogBox);
             IsDialog = true;
         }
 
-        public TwoButtonsDialog(GraphicsContext graphicsMetaData, string textMsg, string closeBtnText = "Cancel", string okBtnText = "OK", Action<UIElement, UIEvent> onOkBtnClick = null, Action<UIElement, UIEvent> onCloseBtnClick = null) : base(graphicsMetaData)
+        public override void Dispose()
+        {
+        }
+
+        public TwoButtonsDialog(GraphicsContext graphicsMetaData, string textMsg, string closeBtnText = "Cancel", string okBtnText = "OK", Action<UIElement, UIEvent> onOkBtnClick = null, Action<UIElement, UIEvent> onCloseBtnClick = null, bool hideCloseButton = false) : base(graphicsMetaData)
         {
             _textMsg = textMsg;
             _closeBtnText = closeBtnText;
             _okBtnText = okBtnText;
             this.onCloseBtnClicked = onCloseBtnClick;
             this.onOkBtnClicked = onOkBtnClick;
-            Init();
+            Init(hideCloseButton);
         }
     }
 }

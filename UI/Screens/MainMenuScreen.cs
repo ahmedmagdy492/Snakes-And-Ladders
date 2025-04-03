@@ -90,5 +90,9 @@ namespace SnakeAndLadders.UI.Screens
                 }
             }));
         }
+
+        public override void Dispose()
+        {
+        }
     }
 }

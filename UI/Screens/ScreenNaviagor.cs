@@ -34,7 +34,8 @@ namespace SnakeAndLadders.UI.Screens
 
         public void PopScreen()
         {
-            _screens.Pop();
+            var screen = _screens.Pop();
+            screen.Dispose();
         }
 
         public void ClearScreens(Screen screen)

@@ -11,5 +11,6 @@ namespace SnakeAndLadders.Helpers
     {
         public const int SCREEN_WIDTH = 1280;
         public const int SCREEN_HEIGHT = 720;
+        public const ushort SERVER_PORT = 35450;
     }
 }

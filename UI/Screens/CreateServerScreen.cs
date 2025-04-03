@@ -1,6 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using SnakeAndLadders.Helpers;
+using SnakeAndLadders.Models;
+using SnakeAndLadders.Services;
 using SnakeAndLadders.UI.UIContainers;
 using System;
 using System.Collections.Generic;
@@ -12,9 +14,41 @@ namespace SnakeAndLadders.UI.Screens
 {
     public class CreateServerScreen : Screen
     {
+        private readonly NetworkServer _networkServer;
+        private bool _isSomeoneConnected = false;
+        private UIButton _waitingBtn;
+
         public CreateServerScreen(GraphicsContext graphicsMetaData) : base(graphicsMetaData)
         {
+            _networkServer = new NetworkServer();
             Init();
+            #pragma warning disable CS4014 
+            _networkServer.SetupServer(
+                (ConnectedClientInfo clientInfo) => 
+                {
+                    _isSomeoneConnected = true;
+                    _waitingBtn.Text = clientInfo.IPAddress;
+                }
+            );
+            _networkServer.OnDataReceived += NetworkServer_OnDataReceived;
+            _networkServer.OnOtherPeerDisconnected += NetworkServer_OnOtherPeerDisconnected;
+            #pragma warning restore CS4014
+        }
+
+        private void NetworkServer_OnDataReceived(byte[] data)
+        {
+            _waitingBtn.Text = MessageParserService.Decode(data);
+        }
+
+        private async void NetworkServer_OnOtherPeerDisconnected()
+        {
+            _isSomeoneConnected = false;
+            _waitingBtn.Text = "Client Disonnected";
+            await Task.Run(async () =>
+            {
+                await Task.Delay(1000);
+                ScreenNaviagor.CreateInstance().PopScreen();
+            });
         }
 
         private void Init()
@@ -34,9 +68,9 @@ namespace SnakeAndLadders.UI.Screens
             connectedPlayersContainer.FlowDirection = UIFlowContainerDirection.RightToLeft;
             UIButton youBtn = new UIButton(_graphicsMetaData, "Your computer");
             youBtn.Background = Color.GreenYellow;
-            UIButton waitingBtn = new UIButton(_graphicsMetaData, "Wating for another player to connect ...");
+            _waitingBtn = new UIButton(_graphicsMetaData, "Wating for another player to connect ...");
             connectedPlayersContainer.Children.Add(youBtn);
-            connectedPlayersContainer.Children.Add(waitingBtn);
+            connectedPlayersContainer.Children.Add(_waitingBtn);
             
             UIButton startGameButton = new UIButton(_graphicsMetaData, "Start Game");
             UIButton exitButton = new UIButton(_graphicsMetaData, "Exit");
@@ -71,6 +105,19 @@ namespace SnakeAndLadders.UI.Screens
         private void ExitButton_OnClick(UIElement arg1, UIEvent arg2)
         {
             ScreenNaviagor.CreateInstance().PopScreen();
+        }
+
+        public override void Update(GameTime gameTime)
+        {
+            if(_isSomeoneConnected)
+            {
+                base.Update(gameTime);
+            }
+        }
+
+        public override void Dispose()
+        {
+            _networkServer.Dispose();
         }
     }
 }

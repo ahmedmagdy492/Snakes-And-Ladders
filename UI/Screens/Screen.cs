@@ -9,13 +9,14 @@ using System.Threading.Tasks;
 
 namespace SnakeAndLadders.UI.Screens
 {
-    public abstract class Screen
+    public abstract class Screen : IDisposable
     {
         protected readonly GraphicsContext _graphicsMetaData;
         protected readonly UIEventManager _uIEventManager;
         protected readonly Stack<UIContainer> _uiContainers;
 
         public bool IsDialog { get; set; }
+        public virtual Color Background { get; set; } = new Color(0x00, 0x00, 0x00, 0xaa);
 
         public Screen(GraphicsContext graphicsMetaData)
         {
@@ -122,5 +123,12 @@ namespace SnakeAndLadders.UI.Screens
                 item.Update(gameTime);
             }
         }
+
+        public void ClearEvents()
+        {
+            _uIEventManager.ClearQueue();
+        }
+
+        public abstract void Dispose();
     }
 }

@@ -20,6 +20,11 @@ namespace SnakeAndLadders.UI
             _events.Enqueue(e);
         }
 
+        public void ClearQueue()
+        {
+            _events.Clear();
+        }
+
         public void ProcessEvents(List<UIElement> uIElements)
         {
             while(_events.Count > 0)
