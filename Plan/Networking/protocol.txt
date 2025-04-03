@@ -1,0 +1,11 @@
+Structure:
+Type: 2 bytes
+DataLen: 4 bytes
+Data: will vary
+
+Supported Message Types:
+-GameStart: 1
+
+GameStart Message Structure:
+Data: 
+byte[0] (player turn) = 1 for player 1 and 2 for player 2 

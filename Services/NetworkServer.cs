@@ -61,6 +61,11 @@ namespace SnakeAndLadders.Services
             }
         }
 
+        public async Task Send(byte[] data)
+        {
+            await _socket.SendAsync(data);
+        }
+
         public void Dispose()
         {
             _socket.Dispose();

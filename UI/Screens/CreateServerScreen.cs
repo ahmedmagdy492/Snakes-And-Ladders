@@ -37,7 +37,7 @@ namespace SnakeAndLadders.UI.Screens
 
         private void NetworkServer_OnDataReceived(byte[] data)
         {
-            _waitingBtn.Text = MessageParserService.Decode(data);
+            _waitingBtn.Text = MessageParserService.DecodeString(data);
         }
 
         private async void NetworkServer_OnOtherPeerDisconnected()
@@ -73,6 +73,7 @@ namespace SnakeAndLadders.UI.Screens
             connectedPlayersContainer.Children.Add(_waitingBtn);
             
             UIButton startGameButton = new UIButton(_graphicsMetaData, "Start Game");
+            startGameButton.OnClick += StartGameButton_OnClick;
             UIButton exitButton = new UIButton(_graphicsMetaData, "Exit");
             exitButton.OnClick += ExitButton_OnClick;
 
@@ -102,7 +103,28 @@ namespace SnakeAndLadders.UI.Screens
             _uiContainers.Push(mainContainer);
         }
 
-        private void ExitButton_OnClick(UIElement arg1, UIEvent arg2)
+        private async void StartGameButton_OnClick(UIElement btn, UIEvent e)
+        {
+            var startMsg = new GameProtocol
+            {
+                Type = MessageType.GameStart,
+                Data = [1],
+                DataLen = 1
+            };
+            byte[] data = MessageParserService.Encode(startMsg);
+            try
+            {
+                await _networkServer.Send(data);
+            }
+            catch (Exception ex)
+            {
+                new TwoButtonsDialog(_graphicsMetaData, ex.Message, hideCloseButton: true, onOkBtnClick: (btn, e) => {
+                    ScreenNaviagor.CreateInstance().PopScreen();
+                });
+            }
+        }
+
+        private void ExitButton_OnClick(UIElement btn, UIEvent e)
         {
             ScreenNaviagor.CreateInstance().PopScreen();
         }

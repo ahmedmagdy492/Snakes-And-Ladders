@@ -74,28 +74,31 @@ namespace SnakeAndLadders.UI.Screens
             Init();
         }
 
-        private void NetworkClient_OnDataReceived(byte[] obj)
+        private void NetworkClient_OnDataReceived(byte[] rawMsg)
         {
-            // TODO: define the protocol structure and based upon that make the decicion on what to execute
-            ScreenNaviagor.CreateInstance().PopScreen();
-            ScreenNaviagor.CreateInstance().PushScreen(new ClientNetworkGamePlayScreen(_networkClient, _graphicsMetaData, new List<Player>
-              {
-                    new Player
-                    {
-                        PlayerName = "You",
-                        CurrentCellNo = 1,
-                        Texture = _graphicsMetaData.ContentManager.Load<Texture2D>("p1"),
-                        Position = Vector2.Zero
-                    },
-                    new Player
-                    {
-                        PlayerName = "Other",
-                        CurrentCellNo = 1,
-                        Texture = _graphicsMetaData.ContentManager.Load<Texture2D>("p2"),
-                        Position = Vector2.Zero
-                    }
-              }
-            ));
+            var gameStartData = MessageParserService.Decode(rawMsg);
+            if(gameStartData.Type == MessageType.GameStart)
+            {
+                ScreenNaviagor.CreateInstance().PopScreen();
+                ScreenNaviagor.CreateInstance().PushScreen(new ClientNetworkGamePlayScreen(_networkClient, _graphicsMetaData, new List<Player>
+                  {
+                        new Player
+                        {
+                            PlayerName = "You",
+                            CurrentCellNo = 1,
+                            Texture = _graphicsMetaData.ContentManager.Load<Texture2D>("p1"),
+                            Position = Vector2.Zero
+                        },
+                        new Player
+                        {
+                            PlayerName = "Other",
+                            CurrentCellNo = 1,
+                            Texture = _graphicsMetaData.ContentManager.Load<Texture2D>("p2"),
+                            Position = Vector2.Zero
+                        }
+                  }
+                ));
+            }
         }
 
         private void CloseButton_OnClick(UIElement arg1, UIEvent arg2)
