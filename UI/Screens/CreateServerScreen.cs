@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using SnakeAndLadders.Helpers;
 using SnakeAndLadders.Models;
@@ -115,6 +116,23 @@ namespace SnakeAndLadders.UI.Screens
             try
             {
                 await _networkServer.Send(data);
+                ScreenNaviagor.CreateInstance().PushScreen(new ServerNetworkGamePlayScreen(_networkServer, _graphicsMetaData, new List<Player>
+                {
+                    new Player
+                    {
+                        PlayerName = "You",
+                        CurrentCellNo = 1,
+                        Texture = _graphicsMetaData.ContentManager.Load<Texture2D>("p1"),
+                        Position = Vector2.Zero,
+                    },
+                    new Player
+                    {
+                        PlayerName = "Other",
+                        CurrentCellNo = 1,
+                        Texture = _graphicsMetaData.ContentManager.Load<Texture2D>("p2"),
+                        Position = Vector2.Zero,
+                    }
+                }));
             }
             catch (Exception ex)
             {
