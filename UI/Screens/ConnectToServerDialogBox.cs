@@ -38,7 +38,7 @@ namespace SnakeAndLadders.UI.Screens
             IsDialog = true;
         }
 
-        private async void ConnectButton_OnClick(UIElement arg1, UIEvent arg2)
+        private async void ConnectButton_OnClick(UIElement btn, UIEvent e)
         {
             if (!string.IsNullOrWhiteSpace(_ipAddressTInput.Value))
             {
@@ -52,12 +52,14 @@ namespace SnakeAndLadders.UI.Screens
                     }, hideCloseButton: true);
                     dialogBox.IsDialog = false;
                     dialogBox.Background = new Color(0x00, 0x00, 0x00);
+                    ScreenNaviagor.CreateInstance().PushScreen(dialogBox);
+                    await _networkClient.StartReceiving();
                 }
                 catch (Exception ex)
                 {
                     var dialogBox = new TwoButtonsDialog(_graphicsMetaData, ex.Message, onOkBtnClick: (UIElement arg1, UIEvent arg2) =>
                     {
-                        ScreenNaviagor.CreateInstance().PopScreen();
+                        ScreenNaviagor.CreateInstance().ClearScreens(new MainMenuScreen(_graphicsMetaData));
                     }, hideCloseButton: true);
                     dialogBox.IsDialog = false;
                     dialogBox.Background = new Color(0x00, 0x00, 0x00);
@@ -71,7 +73,13 @@ namespace SnakeAndLadders.UI.Screens
         {
             _networkClient = new NetworkClient();
             _networkClient.OnDataReceived += NetworkClient_OnDataReceived;
+            _networkClient.OnOtherPeerDisconnected += NetworkClient_OnOtherPeerDisconnected;
             Init();
+        }
+
+        private void NetworkClient_OnOtherPeerDisconnected()
+        {
+            ScreenNaviagor.CreateInstance().PopScreen();
         }
 
         private void NetworkClient_OnDataReceived(byte[] rawMsg)
@@ -84,14 +92,14 @@ namespace SnakeAndLadders.UI.Screens
                   {
                         new Player
                         {
-                            PlayerName = "You",
+                            PlayerName = "Other",
                             CurrentCellNo = 1,
                             Texture = _graphicsMetaData.ContentManager.Load<Texture2D>("p1"),
                             Position = Vector2.Zero
                         },
                         new Player
                         {
-                            PlayerName = "Other",
+                            PlayerName = "You",
                             CurrentCellNo = 1,
                             Texture = _graphicsMetaData.ContentManager.Load<Texture2D>("p2"),
                             Position = Vector2.Zero
