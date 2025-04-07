@@ -6,6 +6,7 @@ using SnakeAndLadders.Models;
 using SnakeAndLadders.Services;
 using SnakeAndLadders.UI.UIContainers;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Threading.Tasks;
 
 namespace SnakeAndLadders.UI.Screens
@@ -24,14 +25,41 @@ namespace SnakeAndLadders.UI.Screens
         private UIButton _rollDiceButton;
         private UILabel _gameStatusLabel;
         private readonly NetworkClient _networkClient;
+        private readonly DiceRollerService _diceRollerService;
 
         public ClientNetworkGamePlayScreen(NetworkClient networkClient, GraphicsContext graphicsMetaData, List<Player> players) : base(graphicsMetaData)
         {
             _networkClient = networkClient;
+            _diceRollerService = new DiceRollerService();
             _players = players;
             _diceSE = _graphicsMetaData.ContentManager.Load<SoundEffect>("dice-roll");
             _winSong = _graphicsMetaData.ContentManager.Load<Song>("win");
             Init();
+            _networkClient.OnDataReceived += NetworkClient_OnDataReceived;
+            _networkClient.OnOtherPeerDisconnected += NetworkClient_OnOtherPeerDisconnected;
+            _rollDiceButton.IsEnabled = false;
+        }
+
+        private void NetworkClient_OnOtherPeerDisconnected()
+        {
+            ScreenNaviagor.CreateInstance().ClearScreens(new MainMenuScreen(_graphicsMetaData));
+        }
+
+        private void NetworkClient_OnDataReceived(byte[] data)
+        {
+            var msg = MessageParserService.Decode(data);
+            if (msg.Type == MessageType.PlayerMove)
+            {
+                _rollDiceButton.IsEnabled = false;
+                _diceSE.Play();
+                int diceValue = _gameLogic.PlayDice();
+                _diceImageUI.ReloadImage(diceValue.ToString());
+
+                _gameLogic.MoveCurrentPlayingPlayer(diceValue);
+                _isPlayingAnimation = true;
+                ChangePlayersColors();
+                _rollDiceButton.IsEnabled = true;
+            }
         }
 
         private void Init()
@@ -100,28 +128,12 @@ namespace SnakeAndLadders.UI.Screens
 
             _uiContainers.Push(mainContainer);
 
-            _gameLogic = new GameLogic(_players, GamePlayMode.AganistComputer);
+            _gameLogic = new GameLogic(_players, GamePlayMode.AganistPlayer);
             _curGameState = GameState.Playing;
             _gameLogic.OnWining += GameLogic_OnWining;
             ChangePlayersColors();
             var currentPlayer = _gameLogic.GetCurrentPlayingPlayer();
             _gameStatusLabel.Text = currentPlayer.PlayerName + " is Playing ...";
-            if(currentPlayer.PlayerName == "Computer")
-            {
-                PlayComputer();
-            }
-        }
-
-        private void PlayComputer()
-        {
-            _rollDiceButton.IsEnabled = false;
-            Task.Run(async () =>
-            {
-                _gameStatusLabel.Text = "Computer is Playing ...";
-                await Task.Delay(3000);
-                RollDiceButton_OnClick(_rollDiceButton, null);
-                _rollDiceButton.IsEnabled = true;
-            });
         }
 
         private void GameLogic_OnWining(Player wonPlayer)
@@ -129,16 +141,10 @@ namespace SnakeAndLadders.UI.Screens
             var prevSong = MediaPlayer.Queue.ActiveSong;
             MediaPlayer.Play(_winSong);
             _curGameState = GameState.Ended;
-            ScreenNaviagor.CreateInstance().PushScreen(new TwoButtonsDialog(_graphicsMetaData, $"{wonPlayer.PlayerName} Won the Game", "Play Again", "Back To Main Menu",
+            ScreenNaviagor.CreateInstance().PushScreen(new TwoButtonsDialog(_graphicsMetaData, $"{wonPlayer.PlayerName} Won the Game", okBtnText: "Main Menu",
             onOkBtnClick: (UIElement arg1, UIEvent arg2) => {
-                ScreenNaviagor.CreateInstance().PopScreen();
-                ScreenNaviagor.CreateInstance().PopScreen();
-            },
-            onCloseBtnClick: (UIElement arg1, UIEvent arg2) => {
-                ScreenNaviagor.CreateInstance().PopScreen();
-                _gameLogic.ResetGame();
-                _curGameState = GameState.Playing;
-            }));
+                ScreenNaviagor.CreateInstance().ClearScreens(new MainMenuScreen(_graphicsMetaData));
+            }, hideCloseButton: true));
             MediaPlayer.Play(prevSong);
         }
 
@@ -175,13 +181,15 @@ namespace SnakeAndLadders.UI.Screens
                     _isPlayingAnimation = false;
                     _gameLogic.ChangePlayerTurn();
                     ChangePlayersColors();
-                    if(_gameLogic.GetCurrentPlayingPlayer().PlayerName == "Computer")
+                    _gameStatusLabel.Text = _gameLogic.GetCurrentPlayingPlayer().PlayerName + " is Playing ...";
+
+                    if (_gameLogic.GetCurrentPlayingPlayer().PlayerName != "Player 2")
                     {
-                        PlayComputer();
+                        _rollDiceButton.IsEnabled = false;
                     }
                     else
                     {
-                        _gameStatusLabel.Text = _gameLogic.GetCurrentPlayingPlayer().PlayerName + " is Playing ...";
+                        _rollDiceButton.IsEnabled = true;
                     }
                 }
             }
@@ -219,18 +227,17 @@ namespace SnakeAndLadders.UI.Screens
             _player2Name.TextColor = currentPlayer.PlayerName == _player2Name.Text ? Color.YellowGreen : Color.Red;
         }
 
-        private void RollDiceButton_OnClick(UIElement clickedBtn, UIEvent e)
+        private async void RollDiceButton_OnClick(UIElement clickedBtn, UIEvent e)
         {
             if(_curGameState == GameState.Playing)
             {
                 clickedBtn.IsEnabled = false;
-                _diceSE.Play();
-                int diceValue = _gameLogic.PlayDice();
-                _diceImageUI.ReloadImage(diceValue.ToString());
-
-                _gameLogic.MoveCurrentPlayingPlayer(diceValue);
-                _isPlayingAnimation = true;
-                ChangePlayersColors();
+                var currentPlayer = _gameLogic.GetCurrentPlayingPlayer();
+                await _networkClient.Send(MessageParserService.Encode(new GameProtocol
+                {
+                    Type = MessageType.ClientPlay,
+                    DataLen = 0,
+                }));
                 clickedBtn.IsEnabled = true;
             }
         }
@@ -254,6 +261,7 @@ namespace SnakeAndLadders.UI.Screens
 
         public override void Dispose()
         {
+            _networkClient.Dispose();
         }
     }
 }

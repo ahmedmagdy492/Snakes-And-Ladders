@@ -8,4 +8,14 @@ Supported Message Types:
 
 GameStart Message Structure:
 Data: 
-byte[0] (player turn) = 1 for player 1 and 2 for player 2 
+byte[0] (player turn) = 1 for player 1 and 2 for player 2
+
+PlayerMove Message Structure:
+Data:
+PlayerTurn: 1 for server player and 2 client player
+StartCell: 1 byte number
+EndCell: 1 byte number
+
+ClientPlay Message Structure:
+Data:
+None

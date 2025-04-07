@@ -32,6 +32,30 @@ namespace SnakeAndLadders.UI.Screens
             _diceSE = _graphicsMetaData.ContentManager.Load<SoundEffect>("dice-roll");
             _winSong = _graphicsMetaData.ContentManager.Load<Song>("win");
             Init();
+            _networkServer.OnDataReceived += NetworkServer_OnDataReceived;
+            _networkServer.OnOtherPeerDisconnected += NetworkServer_OnOtherPeerDisconnected;
+        }
+
+        private void NetworkServer_OnOtherPeerDisconnected()
+        {
+            ScreenNaviagor.CreateInstance().PopScreen();
+        }
+
+        private async void NetworkServer_OnDataReceived(byte[] data)
+        {
+            var msg = MessageParserService.Decode(data);
+            if (msg.Type == MessageType.PlayerMove)
+            {
+            }
+            else if(msg.Type == MessageType.ClientPlay)
+            {
+                await Play(_rollDiceButton, true);
+            }
+        }
+
+        private bool IsMyTurn()
+        {
+            return _gameLogic.GetCurrentPlayingPlayer().PlayerName == "Player 1";
         }
 
         private void Init()
@@ -100,28 +124,21 @@ namespace SnakeAndLadders.UI.Screens
 
             _uiContainers.Push(mainContainer);
 
-            _gameLogic = new GameLogic(_players, GamePlayMode.AganistComputer);
+            _gameLogic = new GameLogic(_players, GamePlayMode.AganistPlayer);
             _curGameState = GameState.Playing;
             _gameLogic.OnWining += GameLogic_OnWining;
             ChangePlayersColors();
             var currentPlayer = _gameLogic.GetCurrentPlayingPlayer();
             _gameStatusLabel.Text = currentPlayer.PlayerName + " is Playing ...";
-            if(currentPlayer.PlayerName == "Computer")
-            {
-                PlayComputer();
-            }
-        }
 
-        private void PlayComputer()
-        {
-            _rollDiceButton.IsEnabled = false;
-            Task.Run(async () =>
+            if(!IsMyTurn())
             {
-                _gameStatusLabel.Text = "Computer is Playing ...";
-                await Task.Delay(3000);
-                RollDiceButton_OnClick(_rollDiceButton, null);
+                _rollDiceButton.IsEnabled = false;
+            }
+            else
+            {
                 _rollDiceButton.IsEnabled = true;
-            });
+            }
         }
 
         private void GameLogic_OnWining(Player wonPlayer)
@@ -129,16 +146,11 @@ namespace SnakeAndLadders.UI.Screens
             var prevSong = MediaPlayer.Queue.ActiveSong;
             MediaPlayer.Play(_winSong);
             _curGameState = GameState.Ended;
-            ScreenNaviagor.CreateInstance().PushScreen(new TwoButtonsDialog(_graphicsMetaData, $"{wonPlayer.PlayerName} Won the Game", "Play Again", "Back To Main Menu",
+            ScreenNaviagor.CreateInstance().PushScreen(new TwoButtonsDialog(_graphicsMetaData,$"{wonPlayer.PlayerName} Won the Game", okBtnText: "Main Menu",
             onOkBtnClick: (UIElement arg1, UIEvent arg2) => {
                 ScreenNaviagor.CreateInstance().PopScreen();
                 ScreenNaviagor.CreateInstance().PopScreen();
-            },
-            onCloseBtnClick: (UIElement arg1, UIEvent arg2) => {
-                ScreenNaviagor.CreateInstance().PopScreen();
-                _gameLogic.ResetGame();
-                _curGameState = GameState.Playing;
-            }));
+            }, hideCloseButton: true));
             MediaPlayer.Play(prevSong);
         }
 
@@ -175,9 +187,9 @@ namespace SnakeAndLadders.UI.Screens
                     _isPlayingAnimation = false;
                     _gameLogic.ChangePlayerTurn();
                     ChangePlayersColors();
-                    if(_gameLogic.GetCurrentPlayingPlayer().PlayerName == "Computer")
+                    if(!IsMyTurn())
                     {
-                        PlayComputer();
+                        _rollDiceButton.IsEnabled = false;
                     }
                     else
                     {
@@ -219,9 +231,9 @@ namespace SnakeAndLadders.UI.Screens
             _player2Name.TextColor = currentPlayer.PlayerName == _player2Name.Text ? Color.YellowGreen : Color.Red;
         }
 
-        private void RollDiceButton_OnClick(UIElement clickedBtn, UIEvent e)
+        private async Task Play(UIElement clickedBtn, bool isItMe)
         {
-            if(_curGameState == GameState.Playing)
+            if (_curGameState == GameState.Playing)
             {
                 clickedBtn.IsEnabled = false;
                 _diceSE.Play();
@@ -231,8 +243,20 @@ namespace SnakeAndLadders.UI.Screens
                 _gameLogic.MoveCurrentPlayingPlayer(diceValue);
                 _isPlayingAnimation = true;
                 ChangePlayersColors();
+                var currentPlayer = _gameLogic.GetCurrentPlayingPlayer();
+                await _networkServer.Send(MessageParserService.Encode(new GameProtocol
+                {
+                    Type = MessageType.PlayerMove,
+                    DataLen = 3,
+                    Data = [(byte)(isItMe ? 1 : 2), (byte)currentPlayer.MovingCellNo, (byte)currentPlayer.CurrentCellNo]
+                }));
                 clickedBtn.IsEnabled = true;
             }
+        }
+
+        private async void RollDiceButton_OnClick(UIElement clickedBtn, UIEvent e)
+        {
+            await Play(clickedBtn, true);
         }
 
         private void PauseButton_OnClick(UIElement clickedBtn, UIEvent e)
