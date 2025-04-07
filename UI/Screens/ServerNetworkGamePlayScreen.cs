@@ -55,7 +55,7 @@ namespace SnakeAndLadders.UI.Screens
 
         private bool IsMyTurn()
         {
-            return _gameLogic.GetCurrentPlayingPlayer().PlayerName == "Player 1";
+            return _gameLogic.GetCurrentPlayingPlayer().PlayerName == "You";
         }
 
         private void Init()

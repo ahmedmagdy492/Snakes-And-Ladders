@@ -183,7 +183,7 @@ namespace SnakeAndLadders.UI.Screens
                     ChangePlayersColors();
                     _gameStatusLabel.Text = _gameLogic.GetCurrentPlayingPlayer().PlayerName + " is Playing ...";
 
-                    if (_gameLogic.GetCurrentPlayingPlayer().PlayerName != "Player 2")
+                    if (_gameLogic.GetCurrentPlayingPlayer().PlayerName != "You")
                     {
                         _rollDiceButton.IsEnabled = false;
                     }
