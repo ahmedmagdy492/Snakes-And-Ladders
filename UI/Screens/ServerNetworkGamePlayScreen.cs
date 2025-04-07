@@ -49,13 +49,7 @@ namespace SnakeAndLadders.UI.Screens
             }
             else if(msg.Type == MessageType.ClientPlay)
             {
-                await Play(_rollDiceButton, true);
             }
-        }
-
-        private bool IsMyTurn()
-        {
-            return _gameLogic.GetCurrentPlayingPlayer().PlayerName == "You";
         }
 
         private void Init()
@@ -127,18 +121,6 @@ namespace SnakeAndLadders.UI.Screens
             _gameLogic = new GameLogic(_players, GamePlayMode.AganistPlayer);
             _curGameState = GameState.Playing;
             _gameLogic.OnWining += GameLogic_OnWining;
-            ChangePlayersColors();
-            var currentPlayer = _gameLogic.GetCurrentPlayingPlayer();
-            _gameStatusLabel.Text = currentPlayer.PlayerName + " is Playing ...";
-
-            if(!IsMyTurn())
-            {
-                _rollDiceButton.IsEnabled = false;
-            }
-            else
-            {
-                _rollDiceButton.IsEnabled = true;
-            }
         }
 
         private void GameLogic_OnWining(Player wonPlayer)
@@ -186,15 +168,7 @@ namespace SnakeAndLadders.UI.Screens
                     }
                     _isPlayingAnimation = false;
                     _gameLogic.ChangePlayerTurn();
-                    ChangePlayersColors();
-                    if(!IsMyTurn())
-                    {
-                        _rollDiceButton.IsEnabled = false;
-                    }
-                    else
-                    {
-                        _gameStatusLabel.Text = _gameLogic.GetCurrentPlayingPlayer().PlayerName + " is Playing ...";
-                    }
+                    //ChangePlayersColors();
                 }
             }
         }
@@ -231,32 +205,13 @@ namespace SnakeAndLadders.UI.Screens
             _player2Name.TextColor = currentPlayer.PlayerName == _player2Name.Text ? Color.YellowGreen : Color.Red;
         }
 
-        private async Task Play(UIElement clickedBtn, bool isItMe)
+        private async void RollDiceButton_OnClick(UIElement clickedBtn, UIEvent e)
         {
             if (_curGameState == GameState.Playing)
             {
                 clickedBtn.IsEnabled = false;
-                _diceSE.Play();
-                int diceValue = _gameLogic.PlayDice();
-                _diceImageUI.ReloadImage(diceValue.ToString());
-
-                _gameLogic.MoveCurrentPlayingPlayer(diceValue);
-                _isPlayingAnimation = true;
-                ChangePlayersColors();
-                var currentPlayer = _gameLogic.GetCurrentPlayingPlayer();
-                await _networkServer.Send(MessageParserService.Encode(new GameProtocol
-                {
-                    Type = MessageType.PlayerMove,
-                    DataLen = 3,
-                    Data = [(byte)(isItMe ? 1 : 2), (byte)currentPlayer.MovingCellNo, (byte)currentPlayer.CurrentCellNo]
-                }));
                 clickedBtn.IsEnabled = true;
             }
-        }
-
-        private async void RollDiceButton_OnClick(UIElement clickedBtn, UIEvent e)
-        {
-            await Play(clickedBtn, true);
         }
 
         private void PauseButton_OnClick(UIElement clickedBtn, UIEvent e)

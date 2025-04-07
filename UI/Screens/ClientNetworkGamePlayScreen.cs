@@ -131,9 +131,6 @@ namespace SnakeAndLadders.UI.Screens
             _gameLogic = new GameLogic(_players, GamePlayMode.AganistPlayer);
             _curGameState = GameState.Playing;
             _gameLogic.OnWining += GameLogic_OnWining;
-            ChangePlayersColors();
-            var currentPlayer = _gameLogic.GetCurrentPlayingPlayer();
-            _gameStatusLabel.Text = currentPlayer.PlayerName + " is Playing ...";
         }
 
         private void GameLogic_OnWining(Player wonPlayer)
@@ -179,18 +176,7 @@ namespace SnakeAndLadders.UI.Screens
                         currentPlayer.Position = new Vector2(movingVec.X + 10, movingVec.Y);
                     }
                     _isPlayingAnimation = false;
-                    _gameLogic.ChangePlayerTurn();
-                    ChangePlayersColors();
-                    _gameStatusLabel.Text = _gameLogic.GetCurrentPlayingPlayer().PlayerName + " is Playing ...";
-
-                    if (_gameLogic.GetCurrentPlayingPlayer().PlayerName != "You")
-                    {
-                        _rollDiceButton.IsEnabled = false;
-                    }
-                    else
-                    {
-                        _rollDiceButton.IsEnabled = true;
-                    }
+                    //_gameLogic.ChangePlayerTurn();
                 }
             }
         }
@@ -232,12 +218,6 @@ namespace SnakeAndLadders.UI.Screens
             if(_curGameState == GameState.Playing)
             {
                 clickedBtn.IsEnabled = false;
-                var currentPlayer = _gameLogic.GetCurrentPlayingPlayer();
-                await _networkClient.Send(MessageParserService.Encode(new GameProtocol
-                {
-                    Type = MessageType.ClientPlay,
-                    DataLen = 0,
-                }));
                 clickedBtn.IsEnabled = true;
             }
         }
