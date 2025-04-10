@@ -15,33 +15,27 @@ namespace SnakeAndLadders.UI.Screens
 {
     public class CreateServerScreen : Screen
     {
-        private readonly NetworkServer _networkServer;
+        private readonly INetworkManager _networkManager;
         private bool _isSomeoneConnected = false;
         private UIButton _waitingBtn;
 
         public CreateServerScreen(GraphicsContext graphicsMetaData) : base(graphicsMetaData)
         {
-            _networkServer = new NetworkServer();
+            _networkManager = new NetworkManager();
             Init();
             #pragma warning disable CS4014 
-            _networkServer.SetupServer(
+            _networkManager.SetupServer(
                 (ConnectedClientInfo clientInfo) => 
                 {
                     _isSomeoneConnected = true;
                     _waitingBtn.Text = clientInfo.IPAddress;
                 }
             );
-            _networkServer.OnDataReceived += NetworkServer_OnDataReceived;
-            _networkServer.OnOtherPeerDisconnected += NetworkServer_OnOtherPeerDisconnected;
+            _networkManager.OnOtherPeerDisconnected += NetworkManager_OnOtherPeerDisconnected;
             #pragma warning restore CS4014
         }
 
-        private void NetworkServer_OnDataReceived(byte[] data)
-        {
-            _waitingBtn.Text = MessageParserService.DecodeString(data);
-        }
-
-        private async void NetworkServer_OnOtherPeerDisconnected()
+        private async void NetworkManager_OnOtherPeerDisconnected()
         {
             _isSomeoneConnected = false;
             _waitingBtn.Text = "Client Disonnected";
@@ -76,6 +70,7 @@ namespace SnakeAndLadders.UI.Screens
             UIButton startGameButton = new UIButton(_graphicsMetaData, "Start Game");
             startGameButton.OnClick += StartGameButton_OnClick;
             UIButton exitButton = new UIButton(_graphicsMetaData, "Exit");
+            exitButton.Id = "Exit".GetHashCode();
             exitButton.OnClick += ExitButton_OnClick;
 
             UICenterFlowContainer bottomContainer = new UICenterFlowContainer(_graphicsMetaData);
@@ -106,40 +101,34 @@ namespace SnakeAndLadders.UI.Screens
 
         private async void StartGameButton_OnClick(UIElement btn, UIEvent e)
         {
-            var startMsg = new GameProtocol
+            if (!_isSomeoneConnected)
+            {
+                return;
+            }
+
+            await _networkManager.Send(MessageParserService.Encode(new GameProtocol
             {
                 Type = MessageType.GameStart,
-                Data = [1],
-                DataLen = 1
-            };
-            byte[] data = MessageParserService.Encode(startMsg);
-            try
+            }));
+            ScreenNaviagor.CreateInstance().PushScreen(new NetworkedGamePlayScreen(_graphicsMetaData, new List<Player>
             {
-                await _networkServer.Send(data);
-                ScreenNaviagor.CreateInstance().PushScreen(new ServerNetworkGamePlayScreen(_networkServer, _graphicsMetaData, new List<Player>
+                new Player
                 {
-                    new Player
-                    {
-                        PlayerName = "You",
-                        CurrentCellNo = 1,
-                        Texture = _graphicsMetaData.ContentManager.Load<Texture2D>("p1"),
-                        Position = Vector2.Zero,
-                    },
-                    new Player
-                    {
-                        PlayerName = "Other",
-                        CurrentCellNo = 1,
-                        Texture = _graphicsMetaData.ContentManager.Load<Texture2D>("p2"),
-                        Position = Vector2.Zero,
-                    }
-                }));
-            }
-            catch (Exception ex)
-            {
-                new TwoButtonsDialog(_graphicsMetaData, ex.Message, hideCloseButton: true, onOkBtnClick: (btn, e) => {
-                    ScreenNaviagor.CreateInstance().PopScreen();
-                });
-            }
+                    CurrentCellNo = 1,
+                    MovingCellNo = 1,
+                    PlayerName = "Player 1",
+                    Position = Vector2.Zero,
+                    Texture = _graphicsMetaData.ContentManager.Load<Texture2D>("p1")
+                },
+                new Player
+                {
+                    CurrentCellNo = 1,
+                    MovingCellNo = 1,
+                    PlayerName = "Player 2",
+                    Position = Vector2.Zero,
+                    Texture = _graphicsMetaData.ContentManager.Load<Texture2D>("p2")
+                }
+            }, _networkManager, PlayerType.Server));
         }
 
         private void ExitButton_OnClick(UIElement btn, UIEvent e)
@@ -149,15 +138,12 @@ namespace SnakeAndLadders.UI.Screens
 
         public override void Update(GameTime gameTime)
         {
-            if(_isSomeoneConnected)
-            {
-                base.Update(gameTime);
-            }
+            base.Update(gameTime);
         }
 
         public override void Dispose()
         {
-            _networkServer.Dispose();
+            _networkManager.Dispose();
         }
     }
 }

@@ -9,8 +9,10 @@ namespace SnakeAndLadders.Models
     public enum MessageType : short
     {
         GameStart = 1,
-        PlayerMove = 2,
-        ClientPlay = 3,
+        Pause,
+        PlayerMove,
+        Win,
+        Disconnect
     }
 
     public class GameProtocol

@@ -10,26 +10,31 @@ using System.Threading.Tasks;
 
 namespace SnakeAndLadders.Services
 {
-    public class NetworkServer : IDisposable
+    public class NetworkManager : INetworkManager
     {
-        private readonly Socket _socket;
+        private readonly Socket _serverSocket;
         private Socket _clientSocket = null;
 
         public event Action<byte[]> OnDataReceived;
         public event Action OnOtherPeerDisconnected;
 
-        public NetworkServer()
+        public NetworkManager()
         {
-            _socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            _serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
         }
 
         public async Task SetupServer(Action<ConnectedClientInfo> onSomeoneConnect)
         {
-            _socket.Bind(new IPEndPoint(new IPAddress([0, 0, 0, 0]), Constants.SERVER_PORT));
-            _socket.Listen(2);
-            _clientSocket = await _socket.AcceptAsync();
+            _serverSocket.Bind(new IPEndPoint(new IPAddress([0, 0, 0, 0]), Constants.SERVER_PORT));
+            _serverSocket.Listen(2);
+            _clientSocket = await _serverSocket.AcceptAsync();
             onSomeoneConnect(new ConnectedClientInfo { IPAddress = _clientSocket.RemoteEndPoint.ToString() });
             await Task.Run(StartReceiving);
+        }
+
+        public async Task Connect(string ip, ushort port)
+        {
+            await _serverSocket.ConnectAsync(ip, port);
         }
 
         private bool IsSocketConnected()
@@ -44,7 +49,7 @@ namespace SnakeAndLadders.Services
             }
         }
 
-        private async Task StartReceiving()
+        public async Task StartReceiving()
         {
             while(IsSocketConnected())
             {
@@ -71,7 +76,7 @@ namespace SnakeAndLadders.Services
 
         public void Dispose()
         {
-            _socket.Dispose();
+            _serverSocket.Dispose();
             if(_clientSocket != null)
             {
                 _clientSocket.Dispose();

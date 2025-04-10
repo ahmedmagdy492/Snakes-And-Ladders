@@ -8,6 +8,12 @@ using System.Threading.Tasks;
 
 namespace SnakeAndLadders.Models
 {
+    public enum PlayerType
+    {
+        Server,
+        Client
+    }
+
     public class Player
     {
         public string PlayerName { get; set; }

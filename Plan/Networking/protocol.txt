@@ -3,19 +3,15 @@ Type: 2 bytes
 DataLen: 4 bytes
 Data: will vary
 
-Supported Message Types:
--GameStart: 1
-
 GameStart Message Structure:
-Data: 
-byte[0] (player turn) = 1 for player 1 and 2 for player 2
+No Data
 
 PlayerMove Message Structure:
 Data:
-PlayerTurn: 1 for server player and 2 client player
-StartCell: 1 byte number
-EndCell: 1 byte number
+"StartCellNo:EndCellNo"
 
-ClientPlay Message Structure:
-Data:
-None
+Pause Message Structure:
+No Data
+
+Win Message Structure:
+"Winner Player Name"

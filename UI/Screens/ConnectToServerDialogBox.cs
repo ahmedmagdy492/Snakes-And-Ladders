@@ -11,7 +11,7 @@ namespace SnakeAndLadders.UI.Screens
 {
     public class ConnectToServerDialogBox : Screen
     {
-        private readonly NetworkClient _networkClient;
+        private readonly INetworkManager _networkManager;
         private UITextInput _ipAddressTInput;
 
         private void Init()
@@ -44,7 +44,7 @@ namespace SnakeAndLadders.UI.Screens
             {
                 try
                 {
-                    await _networkClient.Connect(_ipAddressTInput.Value, Constants.SERVER_PORT);
+                    await _networkManager.Connect(_ipAddressTInput.Value, Constants.SERVER_PORT);
 
                     var dialogBox = new TwoButtonsDialog(_graphicsMetaData, "Connected. Waiting for other player to start", onOkBtnClick: (UIElement arg1, UIEvent arg2) =>
                     {
@@ -53,7 +53,7 @@ namespace SnakeAndLadders.UI.Screens
                     dialogBox.IsDialog = false;
                     dialogBox.Background = new Color(0x00, 0x00, 0x00);
                     ScreenNaviagor.CreateInstance().PushScreen(dialogBox);
-                    await _networkClient.StartReceiving();
+                    await _networkManager.StartReceiving();
                 }
                 catch (Exception ex)
                 {
@@ -71,9 +71,9 @@ namespace SnakeAndLadders.UI.Screens
 
         public ConnectToServerDialogBox(GraphicsContext graphicsMetaData) : base(graphicsMetaData)
         {
-            _networkClient = new NetworkClient();
-            _networkClient.OnDataReceived += NetworkClient_OnDataReceived;
-            _networkClient.OnOtherPeerDisconnected += NetworkClient_OnOtherPeerDisconnected;
+            _networkManager = new NetworkManager();
+            _networkManager.OnDataReceived += NetworkClient_OnDataReceived;
+            _networkManager.OnOtherPeerDisconnected += NetworkClient_OnOtherPeerDisconnected;
             Init();
         }
 
@@ -88,24 +88,24 @@ namespace SnakeAndLadders.UI.Screens
             if(gameStartData.Type == MessageType.GameStart)
             {
                 ScreenNaviagor.CreateInstance().PopScreen();
-                ScreenNaviagor.CreateInstance().PushScreen(new ClientNetworkGamePlayScreen(_networkClient, _graphicsMetaData, new List<Player>
-                  {
-                        new Player
-                        {
-                            PlayerName = "Other",
-                            CurrentCellNo = 1,
-                            Texture = _graphicsMetaData.ContentManager.Load<Texture2D>("p1"),
-                            Position = Vector2.Zero
-                        },
-                        new Player
-                        {
-                            PlayerName = "You",
-                            CurrentCellNo = 1,
-                            Texture = _graphicsMetaData.ContentManager.Load<Texture2D>("p2"),
-                            Position = Vector2.Zero
-                        }
-                  }
-                ));
+                ScreenNaviagor.CreateInstance().PushScreen(new NetworkedGamePlayScreen(_graphicsMetaData, new List<Player>{
+                new Player
+                {
+                    CurrentCellNo = 1,
+                    MovingCellNo = 1,
+                    PlayerName = "Player 1",
+                    Position = Vector2.Zero,
+                    Texture = _graphicsMetaData.ContentManager.Load<Texture2D>("p1")
+                },
+                new Player
+                {
+                    CurrentCellNo = 1,
+                    MovingCellNo = 1,
+                    PlayerName = "Player 2",
+                    Position = Vector2.Zero,
+                    Texture = _graphicsMetaData.ContentManager.Load<Texture2D>("p2")
+                }
+                }, _networkManager, PlayerType.Client));
             }
         }
 
@@ -116,7 +116,7 @@ namespace SnakeAndLadders.UI.Screens
 
         public override void Dispose()
         {
-            _networkClient.Dispose();
+            _networkManager.Dispose();
         }
     }
 }

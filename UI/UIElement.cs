@@ -35,6 +35,7 @@ namespace SnakeAndLadders.UI
 
     public abstract class UIElement
     {
+        public int Id { get; set; } = 0;
         public Vector2 Size { get; set; }
         public Color Background { get; set; }
         public Padding Padding { get; set; }

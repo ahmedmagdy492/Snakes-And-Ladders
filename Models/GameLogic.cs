@@ -260,7 +260,15 @@ namespace SnakeAndLadders.Models
             maps.Add(_currentMap);
             _players = players;
             _gamePlayMode = gamePlayMode;
-            _currentPlayingPlayer = DeterminePlayerTurn();
+            if(_gamePlayMode == GamePlayMode.AganistComputer)
+            {
+                _currentPlayingPlayer = DeterminePlayerTurn();
+            }
+            else
+            {
+                // server player will always play first
+                _currentPlayingPlayer = _players[0];
+            }
             ResetPlayersPositions();
         }
 
