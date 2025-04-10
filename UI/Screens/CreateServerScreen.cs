@@ -21,7 +21,7 @@ namespace SnakeAndLadders.UI.Screens
 
         public CreateServerScreen(GraphicsContext graphicsMetaData) : base(graphicsMetaData)
         {
-            _networkManager = new NetworkManager();
+            _networkManager = new NetworkManager(NetworkMode.Server);
             Init();
             #pragma warning disable CS4014 
             _networkManager.SetupServer(

@@ -10,17 +10,25 @@ using System.Threading.Tasks;
 
 namespace SnakeAndLadders.Services
 {
+    public enum NetworkMode
+    {
+        Client,
+        Server
+    }
+
     public class NetworkManager : INetworkManager
     {
         private readonly Socket _serverSocket;
+        private readonly NetworkMode _networkMode;
         private Socket _clientSocket = null;
 
         public event Action<byte[]> OnDataReceived;
         public event Action OnOtherPeerDisconnected;
 
-        public NetworkManager()
+        public NetworkManager(NetworkMode networkMode)
         {
             _serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            _networkMode = networkMode;
         }
 
         public async Task SetupServer(Action<ConnectedClientInfo> onSomeoneConnect)
@@ -37,7 +45,7 @@ namespace SnakeAndLadders.Services
             await _serverSocket.ConnectAsync(ip, port);
         }
 
-        private bool IsSocketConnected()
+        private bool IsClientConnected()
         {
             try
             {
@@ -49,18 +57,45 @@ namespace SnakeAndLadders.Services
             }
         }
 
+        private bool IsServerSocketConnected()
+        {
+            try
+            {
+                return !(_serverSocket != null && _serverSocket.Poll(1000, SelectMode.SelectRead) && _serverSocket.Available == 0);
+            }
+            catch (SocketException)
+            {
+                return false; // Socket error means it's disconnected
+            }
+        }
+
         public async Task StartReceiving()
         {
-            while(IsSocketConnected())
+            if (_networkMode == NetworkMode.Server)
             {
-                var buffer = new byte[4096];
-                await _clientSocket.ReceiveAsync(buffer);
-                if(OnDataReceived != null)
+                while (IsClientConnected())
                 {
-                    OnDataReceived(buffer);
+                    var buffer = new byte[4096];
+                    await _clientSocket.ReceiveAsync(buffer);
+                    if (OnDataReceived != null)
+                    {
+                        OnDataReceived(buffer);
+                    }
                 }
             }
-            if(OnOtherPeerDisconnected != null)
+            else if (_networkMode == NetworkMode.Client)
+            {
+                while (IsServerSocketConnected())
+                {
+                    var buffer = new byte[4096];
+                    await _serverSocket.ReceiveAsync(buffer);
+                    if (OnDataReceived != null)
+                    {
+                        OnDataReceived(buffer);
+                    }
+                }
+            }
+            if (OnOtherPeerDisconnected != null)
             {
                 OnOtherPeerDisconnected();
             }

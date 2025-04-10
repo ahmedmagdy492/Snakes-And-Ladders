@@ -42,14 +42,14 @@ namespace SnakeAndLadders.Services
 
         public static byte[] Encode(GameProtocol msg)
         {
-            byte[] data = new byte[Constants.MSG_TYPE_LEN + Constants.MSG_DATA_LEN_LEN + msg.DataLen];
+            var data = new List<byte>();
             byte[] msgType = BitConverter.GetBytes((short)msg.Type);
-            Array.Copy(msgType, 0, data, 0, msgType.Length);
+            data.AddRange(msgType);
             byte[] dataLen = BitConverter.GetBytes(msg.DataLen);
-            Array.Copy(dataLen, 0, data, 2, dataLen.Length);
-            Array.Copy(msg.Data, 0, data, 6, msg.Data.Length);
+            data.AddRange(dataLen);
+            data.AddRange(msg.Data);
 
-            return data;
+            return data.ToArray();
         }
     }
 }

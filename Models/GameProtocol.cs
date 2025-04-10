@@ -19,6 +19,6 @@ namespace SnakeAndLadders.Models
     {
         public MessageType Type { get; set; }
         public int DataLen { get; set; }
-        public byte[] Data { get; set; }
+        public byte[] Data { get; set; } = new byte[1];
     }
 }

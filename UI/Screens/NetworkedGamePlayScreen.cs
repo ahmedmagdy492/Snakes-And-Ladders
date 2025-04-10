@@ -43,7 +43,30 @@ namespace SnakeAndLadders.UI.Screens
 
         private void NetworkManager_OnDataReceived(byte[] data)
         {
+            var msg = MessageParserService.Decode(data);
+            if(msg.Type == MessageType.Pause)
+            {
+                ShowPauseMenu();
+            }
+            else if(msg.Type == MessageType.PlayerMove)
+            {
+                var diceValue = Encoding.UTF8.GetString(msg.Data);
+                _rollDiceButton.IsEnabled = false;
+                _diceSE.Play();
+                _diceImageUI.ReloadImage(diceValue);
+                _gameLogic.MoveCurrentPlayingPlayer(int.Parse(diceValue));
+                _isPlayingAnimation = true;
+                ChangePlayersColors();
+            }
+            else if(msg.Type == MessageType.Win)
+            {
+                string winnerPlayerName = Encoding.UTF8.GetString(msg.Data);
+                ShowWinState(_players.FirstOrDefault(p => p.PlayerName.Equals(winnerPlayerName, StringComparison.OrdinalIgnoreCase)));
+            }
+            else if(msg.Type == MessageType.Disconnect)
+            {
 
+            }
         }
 
         private void Init()
@@ -128,15 +151,8 @@ namespace SnakeAndLadders.UI.Screens
             }
         }
 
-        private async void GameLogic_OnWining(Player wonPlayer)
+        private void ShowWinState(Player wonPlayer)
         {
-            var msg = Encoding.UTF8.GetBytes(wonPlayer.PlayerName);
-            await _networkManager.Send(MessageParserService.Encode(new GameProtocol
-            {
-                Type = MessageType.Win,
-                Data = msg,
-                DataLen = msg.Length
-            }));
             var prevSong = MediaPlayer.Queue.ActiveSong;
             MediaPlayer.Play(_winSong);
             _curGameState = GameState.Ended;
@@ -151,6 +167,18 @@ namespace SnakeAndLadders.UI.Screens
                 _curGameState = GameState.Playing;
             }));
             MediaPlayer.Play(prevSong);
+        }
+
+        private async void GameLogic_OnWining(Player wonPlayer)
+        {
+            var msg = Encoding.UTF8.GetBytes(wonPlayer.PlayerName);
+            await _networkManager.Send(MessageParserService.Encode(new GameProtocol
+            {
+                Type = MessageType.Win,
+                Data = msg,
+                DataLen = msg.Length
+            }));
+            ShowWinState(wonPlayer);
         }
 
         public override void Update(GameTime gameTime)
@@ -186,8 +214,29 @@ namespace SnakeAndLadders.UI.Screens
                     _isPlayingAnimation = false;
                     _gameLogic.ChangePlayerTurn();
                     ChangePlayersColors();
-                    _gameStatusLabel.Text = _gameLogic.GetCurrentPlayingPlayer().PlayerName + " is Playing ...";
-                    _rollDiceButton.IsEnabled = false;
+                    _gameStatusLabel.Text = currentPlayer.PlayerName + " is Playing ...";
+                    if(_playerType == PlayerType.Server)
+                    {
+                        if(currentPlayer == _players[0])
+                        {
+                            _rollDiceButton.IsEnabled = true;
+                        }
+                        else
+                        {
+                            _rollDiceButton.IsEnabled = false;
+                        }
+                    }
+                    else
+                    {
+                        if(currentPlayer == _players[1])
+                        {
+                            _rollDiceButton.IsEnabled = true;
+                        }
+                        else
+                        {
+                            _rollDiceButton.IsEnabled = false;
+                        }
+                    }
                 }
             }
         }
@@ -228,15 +277,7 @@ namespace SnakeAndLadders.UI.Screens
         {
             if(_curGameState == GameState.Playing)
             {
-                var currentPlayer = _gameLogic.GetCurrentPlayingPlayer();
-                var msg = Encoding.UTF8.GetBytes($"{currentPlayer.MovingCellNo}:{currentPlayer.CurrentCellNo}");
-                await _networkManager.Send(MessageParserService.Encode(new GameProtocol 
-                {
-                    Type = MessageType.PlayerMove,
-                    Data = msg,
-                    DataLen = msg.Length
-                }));
-                clickedBtn.IsEnabled = false;
+                _rollDiceButton.IsEnabled = false;
                 _diceSE.Play();
                 int diceValue = _gameLogic.PlayDice();
                 _diceImageUI.ReloadImage(diceValue.ToString());
@@ -244,16 +285,21 @@ namespace SnakeAndLadders.UI.Screens
                 _gameLogic.MoveCurrentPlayingPlayer(diceValue);
                 _isPlayingAnimation = true;
                 ChangePlayersColors();
-                clickedBtn.IsEnabled = true;
+                _rollDiceButton.IsEnabled = true;
+
+                var currentPlayer = _gameLogic.GetCurrentPlayingPlayer();
+                var msg = Encoding.UTF8.GetBytes(diceValue.ToString());
+                await _networkManager.Send(MessageParserService.Encode(new GameProtocol
+                {
+                    Type = MessageType.PlayerMove,
+                    Data = msg,
+                    DataLen = msg.Length
+                }));
             }
         }
 
-        private async void PauseButton_OnClick(UIElement clickedBtn, UIEvent e)
+        private void ShowPauseMenu()
         {
-            await _networkManager.Send(MessageParserService.Encode(new GameProtocol
-            {
-                Type = MessageType.Pause,
-            }));
             _curGameState = GameState.Paused;
             var pauseDialog = new TwoButtonsDialog(_graphicsMetaData, "Pause Menu", "Exit", "Back",
             (UIElement arg1, UIEvent arg2) =>
@@ -267,6 +313,15 @@ namespace SnakeAndLadders.UI.Screens
                 ScreenNaviagor.CreateInstance().PopScreen();
             });
             ScreenNaviagor.CreateInstance().PushScreen(pauseDialog);
+        }
+
+        private async void PauseButton_OnClick(UIElement clickedBtn, UIEvent e)
+        {
+            await _networkManager.Send(MessageParserService.Encode(new GameProtocol
+            {
+                Type = MessageType.Pause,
+            }));
+            ShowPauseMenu();
         }
 
         public override void Dispose()

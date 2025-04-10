@@ -71,7 +71,7 @@ namespace SnakeAndLadders.UI.Screens
 
         public ConnectToServerDialogBox(GraphicsContext graphicsMetaData) : base(graphicsMetaData)
         {
-            _networkManager = new NetworkManager();
+            _networkManager = new NetworkManager(NetworkMode.Client);
             _networkManager.OnDataReceived += NetworkClient_OnDataReceived;
             _networkManager.OnOtherPeerDisconnected += NetworkClient_OnOtherPeerDisconnected;
             Init();
