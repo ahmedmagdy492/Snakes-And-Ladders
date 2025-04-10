@@ -103,9 +103,19 @@ namespace SnakeAndLadders.Services
 
         public async Task Send(byte[] data)
         {
-            if(_clientSocket != null)
+            if(_networkMode == NetworkMode.Server)
             {
-                await _clientSocket.SendAsync(data);
+                if (_clientSocket != null)
+                {
+                    await _clientSocket.SendAsync(data);
+                }
+            }
+            else
+            {
+                if (_serverSocket != null)
+                {
+                    await _serverSocket.SendAsync(data);
+                }
             }
         }
 
