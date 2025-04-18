@@ -23,7 +23,7 @@ namespace SnakeAndLadders.UI.Screens
             _bgSE = _graphicsMetaData.ContentManager.Load<Song>("bg_sound");
             MediaPlayer.Volume = 0.2f;
             MediaPlayer.IsRepeating = true;
-            MediaPlayer.Play(_bgSE);
+            //MediaPlayer.Play(_bgSE);
         }
 
         private void Init()
