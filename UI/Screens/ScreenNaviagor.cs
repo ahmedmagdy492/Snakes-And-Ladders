@@ -42,7 +42,8 @@ namespace SnakeAndLadders.UI.Screens
         {
             while(_screens.Count > 0)
             {
-                _screens.Pop();
+                var deletedScreen = _screens.Pop();
+                deletedScreen.Dispose();
             }
 
             _screens.Push(screen);

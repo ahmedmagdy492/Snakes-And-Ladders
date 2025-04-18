@@ -310,8 +310,7 @@ namespace SnakeAndLadders.UI.Screens
             async (UIElement arg1, UIEvent arg2) =>
             {
                 await _networkManager.Send(MessageParserService.Encode(new GameProtocol { DataLen = 0, Type = MessageType.Disconnect }));
-                ScreenNaviagor.CreateInstance().PopScreen();
-                ScreenNaviagor.CreateInstance().PopScreen();
+                ScreenNaviagor.CreateInstance().ClearScreens(new MainMenuScreen(_graphicsMetaData));
             });
             ScreenNaviagor.CreateInstance().PushScreen(pauseDialog);
         }
