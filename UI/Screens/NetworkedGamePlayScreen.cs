@@ -65,7 +65,7 @@ namespace SnakeAndLadders.UI.Screens
             }
             else if(msg.Type == MessageType.Disconnect)
             {
-
+                ScreenNaviagor.CreateInstance().ClearScreens(new MainMenuScreen(_graphicsMetaData));
             }
         }
 
@@ -307,8 +307,9 @@ namespace SnakeAndLadders.UI.Screens
                 ScreenNaviagor.CreateInstance().PopScreen();
                 _curGameState = GameState.Playing;
             },
-            (UIElement arg1, UIEvent arg2) =>
+            async (UIElement arg1, UIEvent arg2) =>
             {
+                await _networkManager.Send(MessageParserService.Encode(new GameProtocol { DataLen = 0, Type = MessageType.Disconnect }));
                 ScreenNaviagor.CreateInstance().PopScreen();
                 ScreenNaviagor.CreateInstance().PopScreen();
             });
