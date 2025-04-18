@@ -18,14 +18,14 @@ namespace SnakeAndLadders.UI.Screens
     {
         private UILabel _player1Name;
         private UILabel _player2Name;
-        private UIImage _diceImageUI;
+        private UIButton _genNumDisBtn;
         private GameLogic _gameLogic;
         private readonly List<Player> _players;
         private bool _isPlayingAnimation = false;
         private readonly SoundEffect _diceSE;
         private readonly Song _winSong;
         private GameState _curGameState;
-        private UIButton _rollDiceButton;
+        private UIButton _genRandNumButton;
         private UILabel _gameStatusLabel;
         private readonly INetworkManager _networkManager;
         private readonly PlayerType _playerType;
@@ -33,7 +33,7 @@ namespace SnakeAndLadders.UI.Screens
         public NetworkedGamePlayScreen(GraphicsContext graphicsMetaData, List<Player> players, INetworkManager networkManager, PlayerType playerType) : base(graphicsMetaData)
         {
             _players = players;
-            _diceSE = _graphicsMetaData.ContentManager.Load<SoundEffect>("dice-roll");
+            _diceSE = _graphicsMetaData.ContentManager.Load<SoundEffect>("play");
             _winSong = _graphicsMetaData.ContentManager.Load<Song>("win");
             _networkManager = networkManager;
             _networkManager.OnDataReceived += NetworkManager_OnDataReceived;
@@ -50,11 +50,11 @@ namespace SnakeAndLadders.UI.Screens
             }
             else if(msg.Type == MessageType.PlayerMove)
             {
-                var diceValue = Encoding.UTF8.GetString(msg.Data);
-                _rollDiceButton.IsEnabled = false;
+                var randValue = Encoding.UTF8.GetString(msg.Data);
+                _genRandNumButton.IsEnabled = false;
                 _diceSE.Play();
-                _diceImageUI.ReloadImage(diceValue);
-                _gameLogic.MoveCurrentPlayingPlayer(int.Parse(diceValue));
+                _genNumDisBtn.Text = randValue;
+                _gameLogic.MoveCurrentPlayingPlayer(int.Parse(randValue));
                 _isPlayingAnimation = true;
                 //ChangePlayersColors();
             }
@@ -75,8 +75,8 @@ namespace SnakeAndLadders.UI.Screens
             UIImage player1Img = new UIImage(_graphicsMetaData, "p1");
             _player2Name = new UILabel(_graphicsMetaData, _players[1].PlayerName);
             UIImage player2Img = new UIImage(_graphicsMetaData, "p2");
-            _rollDiceButton = new UIButton(_graphicsMetaData, "Roll Dice");
-            _rollDiceButton.OnClick += RollDiceButton_OnClick;
+            _genRandNumButton = new UIButton(_graphicsMetaData, "Roll Wheel");
+            _genRandNumButton.OnClick += RollWheelButton_OnClick;
             UICenterFlowContainer mainContainer = new UICenterFlowContainer(_graphicsMetaData, false);
             mainContainer.FlowDirection = UIFlowContainerDirection.RightToLeft;
             mainContainer.Position = new Vector2(20, 20);
@@ -97,7 +97,7 @@ namespace SnakeAndLadders.UI.Screens
             boardContainer.Children.Add(boardUIImage);
             UIButton pauseButton = new UIButton(_graphicsMetaData, "Pause");
             pauseButton.OnClick += PauseButton_OnClick;
-            _diceImageUI = new UIImage(_graphicsMetaData, "1");
+            _genNumDisBtn = new UIButton(_graphicsMetaData, "1");
 
             UICenterFlowContainer buttonsPanel = new UICenterFlowContainer(_graphicsMetaData, false);
             buttonsPanel.FlowDirection = UIFlowContainerDirection.RightToLeft;
@@ -115,8 +115,8 @@ namespace SnakeAndLadders.UI.Screens
 
             buttonsPanel.Margin = new Padding(10);
 
-            buttonsPanel.Children.Add(_rollDiceButton);
-            buttonsPanel.Children.Add(_diceImageUI);
+            buttonsPanel.Children.Add(_genRandNumButton);
+            buttonsPanel.Children.Add(_genNumDisBtn);
             buttonsPanel.Children.Add(pauseButton);
             rightPanel.Children.Add(buttonsPanel);
             rightPanel.Children.Add(_gameStatusLabel);
@@ -143,11 +143,11 @@ namespace SnakeAndLadders.UI.Screens
             _gameStatusLabel.Text = currentPlayer.PlayerName + " is Playing ...";
             if(_playerType == PlayerType.Server)
             {
-                _rollDiceButton.IsEnabled = true;
+                _genRandNumButton.IsEnabled = true;
             }
             else
             {
-                _rollDiceButton.IsEnabled = false;
+                _genRandNumButton.IsEnabled = false;
             }
         }
 
@@ -220,22 +220,22 @@ namespace SnakeAndLadders.UI.Screens
                     {
                         if(currentPlayer == _players[0])
                         {
-                            _rollDiceButton.IsEnabled = true;
+                            _genRandNumButton.IsEnabled = true;
                         }
                         else
                         {
-                            _rollDiceButton.IsEnabled = false;
+                            _genRandNumButton.IsEnabled = false;
                         }
                     }
                     else
                     {
                         if(currentPlayer == _players[1])
                         {
-                            _rollDiceButton.IsEnabled = true;
+                            _genRandNumButton.IsEnabled = true;
                         }
                         else
                         {
-                            _rollDiceButton.IsEnabled = false;
+                            _genRandNumButton.IsEnabled = false;
                         }
                     }
                 }
@@ -274,21 +274,21 @@ namespace SnakeAndLadders.UI.Screens
             _player2Name.TextColor = currentPlayer.PlayerName == _player2Name.Text ? Color.YellowGreen : Color.Red;
         }
 
-        private async void RollDiceButton_OnClick(UIElement clickedBtn, UIEvent e)
+        private async void RollWheelButton_OnClick(UIElement clickedBtn, UIEvent e)
         {
             if(_curGameState == GameState.Playing)
             {
-                _rollDiceButton.IsEnabled = false;
+                _genRandNumButton.IsEnabled = false;
                 _diceSE.Play();
-                int diceValue = _gameLogic.PlayDice();
-                _diceImageUI.ReloadImage(diceValue.ToString());
+                int randNumToPlay = _gameLogic.GenRandNum();
+                _genNumDisBtn.Text = randNumToPlay.ToString();
 
-                _gameLogic.MoveCurrentPlayingPlayer(diceValue);
+                _gameLogic.MoveCurrentPlayingPlayer(randNumToPlay);
                 _isPlayingAnimation = true;
                 //_rollDiceButton.IsEnabled = true;
 
                 var currentPlayer = _gameLogic.GetCurrentPlayingPlayer();
-                var msg = Encoding.UTF8.GetBytes(diceValue.ToString());
+                var msg = Encoding.UTF8.GetBytes(randNumToPlay.ToString());
                 await _networkManager.Send(MessageParserService.Encode(new GameProtocol
                 {
                     Type = MessageType.PlayerMove,

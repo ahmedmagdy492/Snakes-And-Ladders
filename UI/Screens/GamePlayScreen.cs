@@ -16,20 +16,20 @@ namespace SnakeAndLadders.UI.Screens
     {
         private UILabel _player1Name;
         private UILabel _player2Name;
-        private UIImage _diceImageUI;
+        private UIButton _randomNumToPlay;
         private GameLogic _gameLogic;
         private readonly List<Player> _players;
         private bool _isPlayingAnimation = false;
-        private readonly SoundEffect _diceSE;
+        private readonly SoundEffect _wheelSE;
         private readonly Song _winSong;
         private GameState _curGameState;
-        private UIButton _rollDiceButton;
+        private UIButton _rollWheelButton;
         private UILabel _gameStatusLabel;
 
         public GamePlayScreen(GraphicsContext graphicsMetaData, List<Player> players) : base(graphicsMetaData)
         {
             _players = players;
-            _diceSE = _graphicsMetaData.ContentManager.Load<SoundEffect>("dice-roll");
+            _wheelSE = _graphicsMetaData.ContentManager.Load<SoundEffect>("play");
             _winSong = _graphicsMetaData.ContentManager.Load<Song>("win");
             Init();
         }
@@ -40,8 +40,8 @@ namespace SnakeAndLadders.UI.Screens
             UIImage player1Img = new UIImage(_graphicsMetaData, "p1");
             _player2Name = new UILabel(_graphicsMetaData, _players[1].PlayerName);
             UIImage player2Img = new UIImage(_graphicsMetaData, "p2");
-            _rollDiceButton = new UIButton(_graphicsMetaData, "Roll Dice");
-            _rollDiceButton.OnClick += RollDiceButton_OnClick;
+            _rollWheelButton = new UIButton(_graphicsMetaData, "Roll Wheel");
+            _rollWheelButton.OnClick += RollWheelButton_OnClick;
             UICenterFlowContainer mainContainer = new UICenterFlowContainer(_graphicsMetaData, false);
             mainContainer.FlowDirection = UIFlowContainerDirection.RightToLeft;
             mainContainer.Position = new Vector2(20, 20);
@@ -62,7 +62,7 @@ namespace SnakeAndLadders.UI.Screens
             boardContainer.Children.Add(boardUIImage);
             UIButton pauseButton = new UIButton(_graphicsMetaData, "Pause");
             pauseButton.OnClick += PauseButton_OnClick;
-            _diceImageUI = new UIImage(_graphicsMetaData, "1");
+            _randomNumToPlay = new UIButton(_graphicsMetaData, "1");
 
             UICenterFlowContainer buttonsPanel = new UICenterFlowContainer(_graphicsMetaData, false);
             buttonsPanel.FlowDirection = UIFlowContainerDirection.RightToLeft;
@@ -80,8 +80,8 @@ namespace SnakeAndLadders.UI.Screens
 
             buttonsPanel.Margin = new Padding(10);
 
-            buttonsPanel.Children.Add(_rollDiceButton);
-            buttonsPanel.Children.Add(_diceImageUI);
+            buttonsPanel.Children.Add(_rollWheelButton);
+            buttonsPanel.Children.Add(_randomNumToPlay);
             buttonsPanel.Children.Add(pauseButton);
             rightPanel.Children.Add(buttonsPanel);
             rightPanel.Children.Add(_gameStatusLabel);
@@ -114,13 +114,13 @@ namespace SnakeAndLadders.UI.Screens
 
         private void PlayComputer()
         {
-            _rollDiceButton.IsEnabled = false;
+            _rollWheelButton.IsEnabled = false;
             Task.Run(async () =>
             {
                 _gameStatusLabel.Text = "Computer is Playing ...";
                 await Task.Delay(3000);
-                RollDiceButton_OnClick(_rollDiceButton, null);
-                _rollDiceButton.IsEnabled = true;
+                RollWheelButton_OnClick(_rollWheelButton, null);
+                _rollWheelButton.IsEnabled = true;
             });
         }
 
@@ -219,16 +219,16 @@ namespace SnakeAndLadders.UI.Screens
             _player2Name.TextColor = currentPlayer.PlayerName == _player2Name.Text ? Color.YellowGreen : Color.Red;
         }
 
-        private void RollDiceButton_OnClick(UIElement clickedBtn, UIEvent e)
+        private void RollWheelButton_OnClick(UIElement clickedBtn, UIEvent e)
         {
             if(_curGameState == GameState.Playing)
             {
                 clickedBtn.IsEnabled = false;
-                _diceSE.Play();
-                int diceValue = _gameLogic.PlayDice();
-                _diceImageUI.ReloadImage(diceValue.ToString());
+                _wheelSE.Play();
+                int generatedNum = _gameLogic.GenRandNum();
+                _randomNumToPlay.Text = generatedNum.ToString();
 
-                _gameLogic.MoveCurrentPlayingPlayer(diceValue);
+                _gameLogic.MoveCurrentPlayingPlayer(generatedNum);
                 _isPlayingAnimation = true;
                 ChangePlayersColors();
                 clickedBtn.IsEnabled = true;

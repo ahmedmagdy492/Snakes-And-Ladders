@@ -26,7 +26,7 @@ namespace SnakeAndLadders.Models
         private int _currentPlayerNo = 0;
         private Player _currentPlayingPlayer;
         private readonly GamePlayMode _gamePlayMode;
-        private readonly DiceRollerService _diceRollerService;
+        private readonly DiceRollerService _randNumGenService;
 
         public event Action<Player> OnWining;
 
@@ -72,7 +72,7 @@ namespace SnakeAndLadders.Models
             if (players == null || players.Count == 0)
                 throw new ArgumentException("Invalid players argument");
 
-            _diceRollerService = new DiceRollerService();
+            _randNumGenService = new DiceRollerService();
             maps = new List<SnakesLaddersMap>();
             _currentMap = new SnakesLaddersMap
             {
@@ -272,9 +272,9 @@ namespace SnakeAndLadders.Models
             ResetPlayersPositions();
         }
 
-        public int PlayDice()
+        public int GenRandNum()
         {
-            return _diceRollerService.RollTheDice();
+            return _randNumGenService.GenRandNum();
         }
 
         public void ResetGame()

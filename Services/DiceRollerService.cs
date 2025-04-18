@@ -10,7 +10,7 @@ namespace SnakeAndLadders.Services
     {
         private int _currentValue = 0;
 
-        public int RollTheDice()
+        public int GenRandNum()
         {
             Random random = new Random();
             _currentValue = random.Next(1, 7);
