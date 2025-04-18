@@ -54,7 +54,7 @@ namespace SnakeAndLadders.UI.Screens
             _gameStatusLabel = new UILabel(_graphicsMetaData, "");
             _gameStatusLabel.TextColor = Color.White;
 
-            UIFlexDimContainer boardContainer = new UIFlexDimContainer(_graphicsMetaData);
+            UIFlexDimContainer boardContainer = new UIFlexDimContainer(_graphicsMetaData, false);
             boardContainer.Margin = new Padding(10);
             boardContainer.Border = new Border { width = 0 };
             boardContainer.FlowDirection = UIFlowContainerDirection.RightToLeft;

@@ -29,7 +29,7 @@ namespace SnakeAndLadders.UI.UIContainers
         public UIFlowContainerDirection FlowDirection { get; set; } = UIFlowContainerDirection.TopToBottom;
         public bool HasBackgroundImage { get; set; } = false;
 
-        public UICenterFlowContainer(GraphicsContext graphicsMetaData, bool hasBackgroundImage) : base(graphicsMetaData)
+        public UICenterFlowContainer(GraphicsContext graphicsMetaData, bool hasBackgroundImage, string img = "window_2") : base(graphicsMetaData)
         {
             HasBackgroundImage = hasBackgroundImage;
             Position = new Vector2(0, 0);
@@ -43,7 +43,7 @@ namespace SnakeAndLadders.UI.UIContainers
 
             if (hasBackgroundImage)
             {
-                _backgroundTexture = _graphicsMetaData.ContentManager.Load<Texture2D>("window_2");
+                _backgroundTexture = _graphicsMetaData.ContentManager.Load<Texture2D>(img);
             }
             else
             {

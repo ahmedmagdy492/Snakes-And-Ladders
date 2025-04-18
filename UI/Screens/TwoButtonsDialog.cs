@@ -29,7 +29,7 @@ namespace SnakeAndLadders.UI.Screens
 
         private void Init(bool hideCloseBtn)
         {
-            _connectDialogBox = new UICenterFlowContainer(_graphicsMetaData, true);
+            _connectDialogBox = new UICenterFlowContainer(_graphicsMetaData, true, "backlayout");
 
             _connectDialogBox.Margin = new Padding(20);
             UILabel uILabel = new UILabel(_graphicsMetaData, _textMsg);

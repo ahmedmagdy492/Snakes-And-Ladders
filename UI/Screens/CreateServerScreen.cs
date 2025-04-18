@@ -58,7 +58,7 @@ namespace SnakeAndLadders.UI.Screens
                 color = Color.White
             };
 
-            UIFlexDimContainer connectedPlayersContainer = new UIFlexDimContainer(_graphicsMetaData);
+            UIFlexDimContainer connectedPlayersContainer = new UIFlexDimContainer(_graphicsMetaData, true);
             connectedPlayersContainer.Margin = new Padding(10);
             connectedPlayersContainer.FlowDirection = UIFlowContainerDirection.RightToLeft;
             UIButton youBtn = new UIButton(_graphicsMetaData, "Your computer");
