@@ -42,7 +42,7 @@ namespace SnakeAndLadders.UI.Screens
             UIImage player2Img = new UIImage(_graphicsMetaData, "p2");
             _rollDiceButton = new UIButton(_graphicsMetaData, "Roll Dice");
             _rollDiceButton.OnClick += RollDiceButton_OnClick;
-            UICenterFlowContainer mainContainer = new UICenterFlowContainer(_graphicsMetaData);
+            UICenterFlowContainer mainContainer = new UICenterFlowContainer(_graphicsMetaData, false);
             mainContainer.FlowDirection = UIFlowContainerDirection.RightToLeft;
             mainContainer.Position = new Vector2(20, 20);
             mainContainer.Margin = new Padding(10);
@@ -64,14 +64,14 @@ namespace SnakeAndLadders.UI.Screens
             pauseButton.OnClick += PauseButton_OnClick;
             _diceImageUI = new UIImage(_graphicsMetaData, "1");
 
-            UICenterFlowContainer buttonsPanel = new UICenterFlowContainer(_graphicsMetaData);
+            UICenterFlowContainer buttonsPanel = new UICenterFlowContainer(_graphicsMetaData, false);
             buttonsPanel.FlowDirection = UIFlowContainerDirection.RightToLeft;
             buttonsPanel.Border = new Border
             {
                 width = 0,
                 color = Color.White
             };
-            UICenterFlowContainer rightPanel = new UICenterFlowContainer(_graphicsMetaData);
+            UICenterFlowContainer rightPanel = new UICenterFlowContainer(_graphicsMetaData, false);
             rightPanel.Border = new Border
             {
                 width = 0,
@@ -238,7 +238,7 @@ namespace SnakeAndLadders.UI.Screens
         private void PauseButton_OnClick(UIElement clickedBtn, UIEvent e)
         {
             _curGameState = GameState.Paused;
-            var pauseDialog = new TwoButtonsDialog(_graphicsMetaData, "Pause Menu", "Exit", "Back",
+            var pauseDialog = new TwoButtonsDialog(_graphicsMetaData, "Pause", "Exit", "Back",
             (UIElement arg1, UIEvent arg2) =>
             {
                 ScreenNaviagor.CreateInstance().PopScreen();

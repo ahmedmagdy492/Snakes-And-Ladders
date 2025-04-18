@@ -35,15 +35,15 @@ namespace SnakeAndLadders.UI
         {
             Background = Color.White;
             Padding = new Padding(10);
-            TextColor = Color.Black;
+            TextColor = Color.White;
             Font = graphicsMetaData.Font;
             Position = new Vector2(0, 0);
             Width = 250;
             Height = (int)Font.MeasureString("A").Y + (int)Padding.top + (int)Padding.bottom;
             Value = "";
             Size = new Vector2(Width, Height);
-            _texture = new Texture2D(_graphicsMetaData.SpriteBatch.GraphicsDevice, 1, 1);
-            _texture.SetData([Color.White]);
+            _texture = _graphicsMetaData.ContentManager.Load<Texture2D>("input_1"); //new Texture2D(_graphicsMetaData.SpriteBatch.GraphicsDevice, 1, 1);
+            //_texture.SetData([Color.White]);
         }
 
         private bool IsClicked(Vector2 mousePosition)
@@ -65,7 +65,7 @@ namespace SnakeAndLadders.UI
                 if(isCursorVisable)
                 {
                     Vector2 cursorPosition = new Vector2(Position.X + (int)Padding.left + Font.MeasureString(Value).X, Position.Y + (int)Padding.top);
-                    _graphicsMetaData.SpriteBatch.DrawString(_graphicsMetaData.Font, "|", cursorPosition, Color.Black);
+                    _graphicsMetaData.SpriteBatch.DrawString(_graphicsMetaData.Font, "|", cursorPosition, Color.White);
                 }
             }
         }

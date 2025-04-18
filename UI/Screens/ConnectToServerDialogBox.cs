@@ -16,12 +16,11 @@ namespace SnakeAndLadders.UI.Screens
 
         private void Init()
         {
-            UICenterFlowContainer connectDialogBox = new UICenterFlowContainer(_graphicsMetaData);
-            connectDialogBox.ChangeBackground(new Color(0x00, 0x00, 0x00, 0xdd));
+            UICenterFlowContainer connectDialogBox = new UICenterFlowContainer(_graphicsMetaData, true);
 
             connectDialogBox.Margin = new Padding(20);
-            UILabel uILabel = new UILabel(_graphicsMetaData, "Enter Friend IP");
-            uILabel.TextColor = Color.White;
+            UILabel uILabel = new UILabel(_graphicsMetaData, "Friend IP");
+            uILabel.TextColor = Color.Black;
             _ipAddressTInput = new UITextInput(_graphicsMetaData);
 
             UIButton connectButton = new UIButton(_graphicsMetaData, "Connect");

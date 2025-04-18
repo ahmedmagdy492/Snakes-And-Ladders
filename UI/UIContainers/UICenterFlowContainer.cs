@@ -27,9 +27,11 @@ namespace SnakeAndLadders.UI.UIContainers
         private Texture2D _borderTexture;
         private Texture2D _backgroundTexture;
         public UIFlowContainerDirection FlowDirection { get; set; } = UIFlowContainerDirection.TopToBottom;
+        public bool HasBackgroundImage { get; set; } = false;
 
-        public UICenterFlowContainer(GraphicsContext graphicsMetaData) : base(graphicsMetaData)
+        public UICenterFlowContainer(GraphicsContext graphicsMetaData, bool hasBackgroundImage) : base(graphicsMetaData)
         {
+            HasBackgroundImage = hasBackgroundImage;
             Position = new Vector2(0, 0);
             Margin = new Padding(0);
             Border = new Border
@@ -39,17 +41,27 @@ namespace SnakeAndLadders.UI.UIContainers
             };
             Background = new Color(0x00, 0x00, 0x00, 0x00);
 
-            _borderTexture = new Texture2D(graphicsMetaData.GraphicsDeviceManager.GraphicsDevice, 1, 1);
-            _borderTexture.SetData([Border.color]);
-            _backgroundTexture = new Texture2D(graphicsMetaData.GraphicsDeviceManager.GraphicsDevice, 1, 1);
-            _backgroundTexture.SetData([Background]);
+            if (hasBackgroundImage)
+            {
+                _backgroundTexture = _graphicsMetaData.ContentManager.Load<Texture2D>("window_2");
+            }
+            else
+            {
+                _borderTexture = new Texture2D(graphicsMetaData.GraphicsDeviceManager.GraphicsDevice, 1, 1);
+                _borderTexture.SetData([Border.color]);
+                _backgroundTexture = new Texture2D(graphicsMetaData.GraphicsDeviceManager.GraphicsDevice, 1, 1);
+                _backgroundTexture.SetData([Background]);
+            }
         }
 
         public void ChangeBackground(Color newColor)
         {
-            if(_backgroundTexture != null)
+            if (!HasBackgroundImage)
             {
-                _backgroundTexture.SetData([newColor]);
+                if (_backgroundTexture != null)
+                {
+                    _backgroundTexture.SetData([newColor]);
+                }
             }
         }
 
@@ -92,7 +104,7 @@ namespace SnakeAndLadders.UI.UIContainers
                 item.Draw();
             }
 
-            if(Border.width > 0)
+            if(!HasBackgroundImage && Border.width > 0)
             {
                 // top
                 _graphicsMetaData.SpriteBatch.Draw(_borderTexture, new Rectangle((int)Position.X, (int)Position.Y, GetWidth(), Border.width), Border.color);

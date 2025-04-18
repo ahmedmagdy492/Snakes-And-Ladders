@@ -29,11 +29,11 @@ namespace SnakeAndLadders.UI.Screens
 
         private void Init(bool hideCloseBtn)
         {
-            _connectDialogBox = new UICenterFlowContainer(_graphicsMetaData);
+            _connectDialogBox = new UICenterFlowContainer(_graphicsMetaData, true);
 
             _connectDialogBox.Margin = new Padding(20);
             UILabel uILabel = new UILabel(_graphicsMetaData, _textMsg);
-            uILabel.TextColor = Color.White;
+            uILabel.TextColor = Color.Black;
 
             UIButton connectButton = new UIButton(_graphicsMetaData, _okBtnText);
             connectButton.OnClick += onOkBtnClicked;

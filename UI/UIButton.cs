@@ -25,15 +25,14 @@ namespace SnakeAndLadders.UI
         {
             Text = text;
             Background = Color.White;
-            Padding = new Padding(10);
+            Padding = new Padding(20);
             TextColor = Color.Black;
             Font = graphicsMetaData.Font;
             Position = new Vector2(0, 0);
             double width = Padding.left + Padding.right + Font.MeasureString(text).X;
             double height = Padding.top + Padding.bottom + Font.MeasureString(text).Y;
             Size = new Vector2((float)width, (float)height);
-            _texture = new Texture2D(_graphicsMetaData.SpriteBatch.GraphicsDevice, 1, 1);
-            _texture.SetData([Color.White]);
+            _texture = _graphicsMetaData.ContentManager.Load<Texture2D>("btn_1");
         }
 
         public override void Draw()

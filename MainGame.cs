@@ -15,6 +15,7 @@ public class MainGame : Game
     private ScreenNaviagor _screenNavigator;
     private SpriteFont _font;
     private GraphicsContext _graphicsContext;
+    private Texture2D _bgTexture;
 
     public MainGame()
     {
@@ -26,6 +27,7 @@ public class MainGame : Game
         IsMouseVisible = true;
         Window.Title = "Snakes And Ladders";
         _screenNavigator = ScreenNaviagor.CreateInstance();
+        _bgTexture = Content.Load<Texture2D>("bg");
     }
 
     protected override void Initialize()
@@ -66,6 +68,8 @@ public class MainGame : Game
         GraphicsDevice.Clear(Shared.CLEAR_COLOR);
 
         _spriteBatch.Begin();
+
+        _spriteBatch.Draw(_bgTexture, new Rectangle(0, 0, _bgTexture.Width, _bgTexture.Height), Color.White);
 
         _screenNavigator.Draw();
         //Texture2D _texture = new Texture2D(GraphicsDevice, 1, 1);

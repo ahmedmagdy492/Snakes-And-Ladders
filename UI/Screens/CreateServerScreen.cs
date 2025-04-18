@@ -73,7 +73,7 @@ namespace SnakeAndLadders.UI.Screens
             exitButton.Id = "Exit".GetHashCode();
             exitButton.OnClick += ExitButton_OnClick;
 
-            UICenterFlowContainer bottomContainer = new UICenterFlowContainer(_graphicsMetaData);
+            UICenterFlowContainer bottomContainer = new UICenterFlowContainer(_graphicsMetaData, false);
             bottomContainer.Border = new Border
             {
                 width = 0,
