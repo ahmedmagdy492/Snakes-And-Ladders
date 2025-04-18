@@ -56,7 +56,7 @@ namespace SnakeAndLadders.UI.Screens
                 _diceImageUI.ReloadImage(diceValue);
                 _gameLogic.MoveCurrentPlayingPlayer(int.Parse(diceValue));
                 _isPlayingAnimation = true;
-                ChangePlayersColors();
+                //ChangePlayersColors();
             }
             else if(msg.Type == MessageType.Win)
             {
@@ -213,6 +213,7 @@ namespace SnakeAndLadders.UI.Screens
                     }
                     _isPlayingAnimation = false;
                     _gameLogic.ChangePlayerTurn();
+                    currentPlayer = _gameLogic.GetCurrentPlayingPlayer();
                     ChangePlayersColors();
                     _gameStatusLabel.Text = currentPlayer.PlayerName + " is Playing ...";
                     if(_playerType == PlayerType.Server)
@@ -284,8 +285,7 @@ namespace SnakeAndLadders.UI.Screens
 
                 _gameLogic.MoveCurrentPlayingPlayer(diceValue);
                 _isPlayingAnimation = true;
-                ChangePlayersColors();
-                _rollDiceButton.IsEnabled = true;
+                //_rollDiceButton.IsEnabled = true;
 
                 var currentPlayer = _gameLogic.GetCurrentPlayingPlayer();
                 var msg = Encoding.UTF8.GetBytes(diceValue.ToString());
