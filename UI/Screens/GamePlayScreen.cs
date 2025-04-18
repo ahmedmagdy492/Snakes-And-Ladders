@@ -67,7 +67,7 @@ namespace SnakeAndLadders.UI.Screens
             _randomNumToPlay = new UIButton(_graphicsMetaData, "1");
 
             UICenterFlowContainer buttonsPanel = new UICenterFlowContainer(_graphicsMetaData, false);
-            buttonsPanel.FlowDirection = UIFlowContainerDirection.RightToLeft;
+            buttonsPanel.FlowDirection = UIFlowContainerDirection.TopToBottom;
             buttonsPanel.Border = new Border
             {
                 width = 0,
@@ -86,7 +86,7 @@ namespace SnakeAndLadders.UI.Screens
             buttonsPanel.Children.Add(_randomNumToPlay);
             buttonsPanel.Children.Add(pauseButton);
             rightPanel.Children.Add(buttonsPanel);
-            rightPanel.Children.Add(_gameStatusLabel);
+            
 
             int yOffset = mainContainer.GetHeight() + mainContainer.Margin.top.ToInt() + mainContainer.Margin.bottom.ToInt() + boardContainer.Margin.top.ToInt() + boardContainer.Margin.bottom.ToInt();
 
@@ -94,11 +94,22 @@ namespace SnakeAndLadders.UI.Screens
             boardContainer.Size = boardUIImage.Size;
 
             mainContainer.Children.Add(boardContainer);
+
+            UICenterFlowContainer playersBtnsContainer = new UICenterFlowContainer(_graphicsMetaData, false);
+            playersBtnsContainer.FlowDirection = UIFlowContainerDirection.RightToLeft;
+            playersBtnsContainer.Border = new Border { width = 0, color = Color.White };
+            playersBtnsContainer.Children.Add(player1Img);
+            playersBtnsContainer.Children.Add(_player1Name);
+            playersBtnsContainer.Children.Add(player2Img);
+            playersBtnsContainer.Children.Add(_player2Name);
+            mainContainer.Children.Add(playersBtnsContainer);
+
+            
             mainContainer.Children.Add(rightPanel);
-            mainContainer.Children.Add(player1Img);
-            mainContainer.Children.Add(_player1Name);
-            mainContainer.Children.Add(player2Img);
-            mainContainer.Children.Add(_player2Name);
+            
+            UIFlexDimContainer sideBtnsContainer = new UIFlexDimContainer(_graphicsMetaData, false);
+            sideBtnsContainer.Children.Add(_gameStatusLabel);
+            mainContainer.Children.Add(sideBtnsContainer);
 
             _uiContainers.Push(mainContainer);
 
