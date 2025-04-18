@@ -5,6 +5,7 @@ using SnakeAndLadders.Helpers;
 using SnakeAndLadders.Models;
 using SnakeAndLadders.Services;
 using SnakeAndLadders.UI.UIContainers;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
@@ -25,6 +26,7 @@ namespace SnakeAndLadders.UI.Screens
         private GameState _curGameState;
         private UIButton _rollWheelButton;
         private UILabel _gameStatusLabel;
+        private event Action OnGamePauseEnd;
 
         public GamePlayScreen(GraphicsContext graphicsMetaData, List<Player> players) : base(graphicsMetaData)
         {
@@ -221,7 +223,11 @@ namespace SnakeAndLadders.UI.Screens
 
         private void RollWheelButton_OnClick(UIElement clickedBtn, UIEvent e)
         {
-            if(_curGameState == GameState.Playing)
+            if(_curGameState == GameState.Paused && _gameLogic.GetCurrentPlayingPlayer().PlayerName == "Computer")
+            {
+                OnGamePauseEnd += GamePlayScreen_OnGamePauseEnd;
+            }
+            else if(_curGameState == GameState.Playing)
             {
                 clickedBtn.IsEnabled = false;
                 _wheelSE.Play();
@@ -235,6 +241,20 @@ namespace SnakeAndLadders.UI.Screens
             }
         }
 
+        private void GamePlayScreen_OnGamePauseEnd()
+        {
+            _rollWheelButton.IsEnabled = false;
+            _wheelSE.Play();
+            int generatedNum = _gameLogic.GenRandNum();
+            _randomNumToPlay.Text = generatedNum.ToString();
+
+            _gameLogic.MoveCurrentPlayingPlayer(generatedNum);
+            _isPlayingAnimation = true;
+            ChangePlayersColors();
+            _rollWheelButton.IsEnabled = true;
+            OnGamePauseEnd -= GamePlayScreen_OnGamePauseEnd;
+        }
+
         private void PauseButton_OnClick(UIElement clickedBtn, UIEvent e)
         {
             _curGameState = GameState.Paused;
@@ -242,6 +262,10 @@ namespace SnakeAndLadders.UI.Screens
             (UIElement arg1, UIEvent arg2) =>
             {
                 ScreenNaviagor.CreateInstance().PopScreen();
+                if(OnGamePauseEnd != null)
+                {
+                    OnGamePauseEnd();
+                }
                 _curGameState = GameState.Playing;
             },
             (UIElement arg1, UIEvent arg2) =>
