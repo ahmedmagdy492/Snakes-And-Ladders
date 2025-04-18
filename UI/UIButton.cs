@@ -26,7 +26,7 @@ namespace SnakeAndLadders.UI
             Text = text;
             Background = Color.White;
             Padding = new Padding(20);
-            TextColor = Color.Black;
+            TextColor = new Color(0x99, 0x66, 0x33);
             Font = graphicsMetaData.Font;
             Position = new Vector2(0, 0);
             double width = Padding.left + Padding.right + Font.MeasureString(text).X;
