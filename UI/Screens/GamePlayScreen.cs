@@ -152,7 +152,6 @@ namespace SnakeAndLadders.UI.Screens
                 _gameLogic.ResetGame();
                 _curGameState = GameState.Playing;
             }));
-            MediaPlayer.Play(prevSong);
         }
 
         public override void Update(GameTime gameTime)
