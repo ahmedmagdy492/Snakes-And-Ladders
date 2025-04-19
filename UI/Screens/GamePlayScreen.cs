@@ -146,11 +146,13 @@ namespace SnakeAndLadders.UI.Screens
             onOkBtnClick: (UIElement arg1, UIEvent arg2) => {
                 ScreenNaviagor.CreateInstance().PopScreen();
                 ScreenNaviagor.CreateInstance().PopScreen();
+                MediaPlayer.Stop();
             },
             onCloseBtnClick: (UIElement arg1, UIEvent arg2) => {
                 ScreenNaviagor.CreateInstance().PopScreen();
                 _gameLogic.ResetGame();
                 _curGameState = GameState.Playing;
+                MediaPlayer.Stop();
             }));
         }
 
