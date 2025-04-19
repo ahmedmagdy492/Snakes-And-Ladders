@@ -153,20 +153,20 @@ namespace SnakeAndLadders.UI.Screens
 
         private void ShowWinState(Player wonPlayer)
         {
-            var prevSong = MediaPlayer.Queue.ActiveSong;
             MediaPlayer.Play(_winSong);
             _curGameState = GameState.Ended;
             ScreenNaviagor.CreateInstance().PushScreen(new TwoButtonsDialog(_graphicsMetaData, $"{wonPlayer.PlayerName} Won the Game", "Play Again", "Back To Main Menu",
             onOkBtnClick: (UIElement arg1, UIEvent arg2) => {
                 ScreenNaviagor.CreateInstance().PopScreen();
                 ScreenNaviagor.CreateInstance().PopScreen();
+                MediaPlayer.Stop();
             },
             onCloseBtnClick: (UIElement arg1, UIEvent arg2) => {
                 ScreenNaviagor.CreateInstance().PopScreen();
                 _gameLogic.ResetGame();
                 _curGameState = GameState.Playing;
+                MediaPlayer.Stop();
             }));
-            MediaPlayer.Play(prevSong);
         }
 
         private async void GameLogic_OnWining(Player wonPlayer)

@@ -139,7 +139,6 @@ namespace SnakeAndLadders.UI.Screens
 
         private void GameLogic_OnWining(Player wonPlayer)
         {
-            var prevSong = MediaPlayer.Queue.ActiveSong;
             MediaPlayer.Play(_winSong);
             _curGameState = GameState.Ended;
             ScreenNaviagor.CreateInstance().PushScreen(new TwoButtonsDialog(_graphicsMetaData, $"{wonPlayer.PlayerName} Won the Game", "Play Again", "Back To Main Menu",
